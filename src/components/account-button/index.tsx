@@ -35,19 +35,31 @@ export function AccountButton(): JSX.Element {
   const sdk = useSdk();
   const { onOpen, onClose, isOpen } = useDisclosure()
   const [loading, setLoading] = useBoolean();
+  const verionRequired = "0.10.2-gno";
 
-  async function init(loadWallet: WalletLoader) {
-    const signer = await loadWallet(config.chainId, config.addressPrefix);
+  function init(loadWallet: WalletLoader) {
+    const signer = loadWallet(config.chainId, config.addressPrefix);
     sdk.init(signer);
   }
 
   async function connectKeplr() {
+    const w = window as any;
+    if (!w.keplr) {
+      alert("Install keplr");
+      return;
+    }
+
+    if (w.keplr.version !== verionRequired) {
+      alert("Keplr version required: " + verionRequired + " , current verison: " + w.keplr.version);
+      return;
+    }
+
     setLoading.on();
-    const anyWindow = window as any;
+
     try {
-      await anyWindow.keplr?.experimentalSuggestChain(configKeplr(config));
-      await anyWindow.keplr?.enable(config.chainId);
-      await init(loadKeplrWallet);
+      await w.keplr.experimentalSuggestChain(configKeplr(config));
+      await w.keplr.enable(config.chainId);
+      init(loadKeplrWallet);
     } catch (error) {
       setLoading.off();
       console.error(error);
