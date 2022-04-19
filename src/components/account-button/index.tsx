@@ -28,6 +28,7 @@ import {
   formatPrice,
   getTokenConfig,
 } from "../../services";
+import { useEffect } from "react";
 import userLogo from "../../assets/user-default.svg";
 
 export function AccountButton(): JSX.Element {
@@ -52,6 +53,12 @@ export function AccountButton(): JSX.Element {
       console.error(error);
     }
   }
+
+  useEffect(() => {
+    window.addEventListener('keplr_keystorechange', async () => {
+      await init(loadKeplrWallet);
+    })
+  });
 
   const loginButton = (
     <Button
