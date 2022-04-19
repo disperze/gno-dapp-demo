@@ -1,4 +1,5 @@
 import { coins, Token } from "../config";
+import { StdSignDoc, StdSignature } from "@cosmjs/amino";
 
 export function formatAddress(wallet: string): string {
   return ellideMiddle(wallet, 24);
@@ -28,4 +29,31 @@ export function formatPrice(price: {amount: string, denom: string}): string {
 export function toMinDenom(amount: number, denom: string): string {
   const coin = getTokenConfig(denom)!;
   return Math.floor(amount * Math.pow(10, coin.decimals)).toString();
+}
+
+export function makeGnoStdTx(
+  content: StdSignDoc,
+  signature: StdSignature,
+) {
+
+  return {
+    msg: content.msgs.map((m: any) => ({
+      '@type': m.type,
+      ...m.value
+    })),
+    fee: {
+      gas_wanted: content.fee.gas,
+      gas_fee: `${content.fee.amount[0].amount}${content.fee.amount[0].denom}`,
+    },
+    signatures: [
+      {
+        pub_key: {
+          "@type": "/tm.PubKeySecp256k1",
+          value: signature.pub_key.value,
+        },
+        signature: signature.signature,
+      }
+    ],
+    memo: content.memo,
+  };
 }

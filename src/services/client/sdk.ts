@@ -12,6 +12,14 @@ export function loadKeplrWallet(chainId: string): OfflineAminoSigner {
     throw new Error("Keplr extension is not available");
   }
 
+  anyWindow.keplr.defaultOptions = {
+    sign: {
+      preferNoSetFee: true,
+      preferNoSetMemo: false,
+      // disableBalanceCheck: true,
+    }
+  };
+
   return anyWindow.getOfflineSignerOnlyAmino(chainId);
 }
 
@@ -19,7 +27,7 @@ export function loadKeplrWallet(chainId: string): OfflineAminoSigner {
 export function createClient(config: AppConfig): LcdClient {
   const instance = axios.create({
     baseURL: config.httpUrl,
-    timeout: 1000,
+    timeout: 15000,
   });
 
   return new LcdClient(instance);

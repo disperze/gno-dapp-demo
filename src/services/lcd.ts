@@ -22,7 +22,7 @@ export class LcdClient {
             tx: tx,
         };
 
-        const res = await this.instance.post("/txs/", JSON.stringify(payload), {
+        const res = await this.instance.post("/txs", JSON.stringify(payload), {
             headers: {
                 'Content-Type': 'application/json'
             }

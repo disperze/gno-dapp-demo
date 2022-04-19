@@ -13,16 +13,68 @@ import {
     useBoolean,
 } from '@chakra-ui/react';
 import { useState } from 'react';
+import { StdSignDoc } from "@cosmjs/amino";
+import { useSdk } from '../../services';
+import { BaseAccount, makeGnoStdTx } from '../../services';
 
 export const Transfer = () => {
+    const { address, client, getSigner, config } = useSdk();
+
     const [loading, setLoading] = useBoolean();
     const [recipient, setRecipient] = useState<string>();
     const [amount, setAmount] = useState<number>(0);
 
-    const submit = () => {
-        setLoading.on();
+    const createSignDoc = (account: BaseAccount, recipient: string, amount: number): StdSignDoc => {
+      return {
+        msgs: [
+          {
+            type: "/bank.MsgSend",
+            value: {
+              from_address: account.address,
+              to_address: recipient,
+              amount: `${amount}${config.token.coinMinimalDenom}`,
+            }
+          }
+        ],
+        fee: { amount: [{
+          amount: "1",
+          denom: config.token.coinMinimalDenom
+        }], gas: "200000" },
+        chain_id: config.chainId!,
+        memo: "",
+        account_number: account.account_number,
+        sequence: account.sequence,
+      };
+
+    };
+
+    const submit = async () => {
+      if (!address || !recipient || !amount) {
+        return;
+      }
+      const signer = getSigner();
+      if (!client || !signer) {
+        return;
+      }
+
+      setLoading.on();
+
+      try {
+        const account = await client.getAccount(address);
+        const signDoc = createSignDoc(account.BaseAccount, recipient, amount * 10**6);
+        console.log(signDoc);
+        const signature = await signer.signAmino(address, signDoc);
+        console.log(signature);
+  
+        const stdTx = makeGnoStdTx(signature.signed, signature.signature);
+        const response = await client.broadcastTx(stdTx);
         
-        console.log(recipient, amount);
+        console.log(response);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading.off();
+      }
     };
 
   return (
@@ -59,6 +111,7 @@ export const Transfer = () => {
             </FormControl>
             <Stack spacing={10} pt={2}>
               <Button
+                disabled={!address}
                 onClick={submit}
                 isLoading={loading}
                 loadingText="Sending"
