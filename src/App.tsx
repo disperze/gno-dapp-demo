@@ -7,14 +7,9 @@ import {
 import {
   ChakraProvider,
   Box,
-  Text,
-  Link,
-  VStack,
-  Code,
   Grid,
   theme,
 } from "@chakra-ui/react"
-import { ColorModeSwitcher } from "./ColorModeSwitcher"
 import { Home } from "./pages/home"
 import { Transfer } from "./pages/transfer"
 import { SdkProvider } from "./services"
@@ -27,7 +22,6 @@ export const App = () => (
     <SdkProvider config={config}>
     <Box textAlign="center" fontSize="xl">
       <Grid minH="100vh" pt={2}>
-        {/* <ColorModeSwitcher justifySelf="flex-end" /> */}
         <Router>
           <Navbar />
           <Routes>

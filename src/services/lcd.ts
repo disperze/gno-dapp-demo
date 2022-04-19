@@ -1,4 +1,4 @@
-import axios, { AxiosInstance } from "axios";
+import { AxiosInstance } from "axios";
 import { AccountResponse, BalanceResponse } from "./types";
 
 export class LcdClient {

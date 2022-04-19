@@ -71,7 +71,7 @@ export function SdkProvider({ config: configProp, children }: SdkProviderProps):
     balance.length = 0;
     const response = await client.getBalance(address);
     if (response && response.balances.length > 0) balance.push(response.balances[0]);
-  }, [client, config]);
+  }, [client]);
 
   useEffect(() => {
     const client = createClient(config);
