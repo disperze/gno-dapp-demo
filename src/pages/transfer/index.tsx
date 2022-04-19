@@ -18,13 +18,13 @@ import { useSdk } from '../../services';
 import { BaseAccount, makeGnoStdTx } from '../../services';
 
 export const Transfer = () => {
-    const { address, client, getSigner, config } = useSdk();
+    const { address, client, getSigner, config, refreshBalance } = useSdk();
 
     const [loading, setLoading] = useBoolean();
     const [recipient, setRecipient] = useState<string>();
     const [amount, setAmount] = useState<number>(0);
 
-    const createSignDoc = (account: BaseAccount, recipient: string, amount: number): StdSignDoc => {
+    const createSignDoc = (account: BaseAccount, recipient: string, amount: number, gas: number): StdSignDoc => {
       return {
         msgs: [
           {
@@ -39,7 +39,7 @@ export const Transfer = () => {
         fee: { amount: [{
           amount: "1",
           denom: config.token.coinMinimalDenom
-        }], gas: "200000" },
+        }], gas: gas.toString() },
         chain_id: config.chainId!,
         memo: "",
         account_number: account.account_number,
@@ -61,14 +61,15 @@ export const Transfer = () => {
 
       try {
         const account = await client.getAccount(address);
-        const signDoc = createSignDoc(account.BaseAccount, recipient, amount * 10**6);
+        const signDoc = createSignDoc(account.BaseAccount, recipient, amount * 10**6, 60000);
         console.log(signDoc);
         const signature = await signer.signAmino(address, signDoc);
         console.log(signature);
   
         const stdTx = makeGnoStdTx(signature.signed, signature.signature);
         const response = await client.broadcastTx(stdTx);
-        
+        await refreshBalance();
+        alert("Tx hash:" + response.hash);
         console.log(response);
       } catch (error) {
         console.log(error);
