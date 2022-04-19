@@ -69,9 +69,10 @@ export const Transfer = () => {
         const stdTx = makeGnoStdTx(signature.signed, signature.signature);
         const response = await client.broadcastTx(stdTx);
         await refreshBalance();
-        alert("Tx hash:" + response.hash);
+        alert("Tx: " + response.hash);
         console.log(response);
       } catch (error) {
+        alert("Error");
         console.log(error);
       } finally {
         setLoading.off();

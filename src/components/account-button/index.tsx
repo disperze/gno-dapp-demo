@@ -25,7 +25,6 @@ import {
   configKeplr,
   loadKeplrWallet,
   WalletLoader,
-  formatAddress,
   formatPrice,
   getTokenConfig,
 } from "../../services";
@@ -119,7 +118,7 @@ export function AccountButton(): JSX.Element {
               <Badge fontSize="0.6rem" variant="outline" colorScheme="orange">
                 GNO Testnet
               </Badge>
-              <Text fontSize="md" fontWeight="semibold">{formatAddress(sdk.address)}</Text>
+              <Text fontSize="md" fontWeight="semibold">{sdk.address}</Text>
             </Box>
             <Box py={2}>
               {sdk.balance.map(coin => (
