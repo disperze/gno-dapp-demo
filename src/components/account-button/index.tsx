@@ -35,7 +35,6 @@ export function AccountButton(): JSX.Element {
   const sdk = useSdk();
   const { onOpen, onClose, isOpen } = useDisclosure()
   const [loading, setLoading] = useBoolean();
-  const verionRequired = "0.10.2-gno";
 
   function init(loadWallet: WalletLoader) {
     const signer = loadWallet(config.chainId, config.addressPrefix);
@@ -46,11 +45,6 @@ export function AccountButton(): JSX.Element {
     const w = window as any;
     if (!w.keplr) {
       alert("Install keplr");
-      return;
-    }
-
-    if (w.keplr.version !== verionRequired) {
-      alert("Keplr version required: " + verionRequired + " , current verison: " + w.keplr.version);
       return;
     }
 
