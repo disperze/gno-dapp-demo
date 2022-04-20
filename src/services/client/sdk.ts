@@ -1,8 +1,9 @@
 import axios from "axios";
-import { OfflineAminoSigner, Secp256k1HdWallet, makeCosmoshubPath } from "@cosmjs/amino";
+import { OfflineAminoSigner, makeCosmoshubPath } from "@cosmjs/amino";
 
 import { AppConfig } from "../config/network";
 import { LcdClient } from "../lcd";
+import { Secp256k1HdWallet } from "../signer";
 
 export type WalletLoader = (chainId: string, addressPrefix?: string) => Promise<OfflineAminoSigner>;
 
