@@ -77,7 +77,9 @@ export function AccountButton(): JSX.Element {
     setLoading.on();
 
     try {
-      await init(loadOrCreateWalletDirect);
+      setTimeout(async () => {
+        await init(loadOrCreateWalletDirect);
+      }, 500);
     } catch (error) {
       setLoading.off();
       console.error(error);
