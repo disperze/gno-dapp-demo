@@ -19,7 +19,6 @@ import { useState } from 'react';
 import { StdSignDoc } from "@cosmjs/amino";
 import { LcdClient, parseBoards, parseResultId, useSdk } from '../../services';
 import { BaseAccount, makeGnoStdTx } from '../../services';
-import { ExternalLinkIcon } from '@chakra-ui/icons';
 
 export const ReplyPost = () => {
   const toast = useToast();
@@ -74,7 +73,7 @@ export const ReplyPost = () => {
     const boardList = parseBoards(boards);
     if (boardList.length > 0) {
       const newPostId = parseResultId(data);
-      const replyUrl = `https://gno.land${boardList[bid-1]}/${threadId}/${newPostId}`
+      const replyUrl = `${boardList[bid-1]}/${threadId}/${newPostId}`
 
       return replyUrl;
     }
@@ -96,7 +95,7 @@ export const ReplyPost = () => {
       // TODO: clear body special chars
       const msg = createReplyMsg(address, bid, threadId, postId, body);
       const account = await client.getAccount(address);
-      const signDoc = createSignDoc(account.BaseAccount, msg, 800000);
+      const signDoc = createSignDoc(account.BaseAccount, msg, 2000000);
       const signature = await signer.signAmino(address, signDoc);
 
       const stdTx = makeGnoStdTx(signature.signed, signature.signature);
@@ -105,7 +104,7 @@ export const ReplyPost = () => {
       const replyUrl = await getReplyUrl(client, bid, threadId, response.result.Data);
       toast({
         title: `Transaction Successful`,
-        description: (<Link href={replyUrl} isExternal >View reply <ExternalLinkIcon mx='2px' /></Link>),
+        description: (<Link href={replyUrl} >View reply </Link>),
         status: "success",
         position: "bottom-right",
         isClosable: true,

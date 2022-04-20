@@ -16,11 +16,12 @@ import { SdkProvider } from "./services"
 import { config } from "./config";
 import { Navbar } from "./components/navbar"
 import { NewPost, ReplyPost } from "./pages/post"
+import { Board } from "./pages/board"
 
 export const App = () => (
   <ChakraProvider theme={theme}>
     <SdkProvider config={config}>
-    <Box textAlign="center" fontSize="xl">
+    <Box fontSize="xl">
       <Grid minH="100vh" pt={2}>
         <Router>
           <Navbar />
@@ -29,6 +30,7 @@ export const App = () => (
             <Route path="transfer" element={<Transfer />} />
             <Route path="create-post" element={<NewPost />} />
             <Route path="reply-post" element={<ReplyPost />} />
+            <Route path="r/*" element={<Board />} />
           </Routes>
         </Router>
       </Grid>

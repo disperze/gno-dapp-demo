@@ -55,7 +55,7 @@ export function Navbar(): JSX.Element {
         <Flex flex={{ base: 1 }}>
           <Link
             as={ReactRouterLink}
-            to="/"
+            to="/r/boards:gnolang"
             _hover={{
               textDecoration: 'none',
             }}>
@@ -65,7 +65,7 @@ export function Navbar(): JSX.Element {
               fontSize='2xl'
               fontWeight='extrabold'
             >
-              Gno dApp
+              GnoLand
             </Text>
           </Link>
         </Flex>

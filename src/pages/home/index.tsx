@@ -1,4 +1,5 @@
 import * as React from "react"
+import { Link as ReactRouterLink } from "react-router-dom";
 import {
   Link,
   VStack,
@@ -8,12 +9,11 @@ export const Home = () => (
   <VStack spacing={8}>
     <Link
       color="teal.500"
-      href="https://gno.land"
+      as={ReactRouterLink}
+      to="/r/boards:gnolang"
       fontSize="2xl"
-      target="_blank"
-      rel="noopener noreferrer"
     >
-      Go to gno.land
+      Go to gnolang board.
     </Link>
   </VStack>
 )
