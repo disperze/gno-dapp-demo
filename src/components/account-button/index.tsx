@@ -123,6 +123,7 @@ export function AccountButton(): JSX.Element {
               Browser wallet
             </Button>
             <Button colorScheme='teal' w={"240px"} variant='outline'
+              disabled
               onClick={connectKeplr}>
               Keplr wallet
             </Button>
