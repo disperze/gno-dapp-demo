@@ -3,7 +3,9 @@ import { OfflineAminoSigner, makeCosmoshubPath } from "@cosmjs/amino";
 
 import { AppConfig } from "../config/network";
 import { LcdClient } from "../lcd";
-import { Secp256k1HdWallet } from "../signer";
+import { LedgerSigner, Secp256k1HdWallet } from "../signer";
+import TransportWebUSB from "@ledgerhq/hw-transport-webusb";
+
 
 export type WalletLoader = (chainId: string, addressPrefix?: string) => Promise<OfflineAminoSigner>;
 
@@ -22,6 +24,21 @@ export async function loadKeplrWallet(chainId: string): Promise<OfflineAminoSign
   };
 
   return await anyWindow.getOfflineSignerOnlyAmino(chainId);
+}
+
+export async function loadLedgerWallet( _chainId: string, addressPrefix?: string): Promise<OfflineAminoSigner> {
+  const interactiveTimeout = 120_000;
+  const ledgerTransport = await TransportWebUSB.create(interactiveTimeout, interactiveTimeout);
+
+  return new LedgerSigner(ledgerTransport, {
+    hdPaths: [makeCosmoshubPath(0)],
+    prefix: addressPrefix
+  });
+}
+
+export function webUsbMissing(): boolean {
+  const anyNavigator: any = navigator;
+  return !anyNavigator?.usb;
 }
 
 export async function loadOrCreateWalletDirect(

@@ -26,7 +26,12 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { MdAccountBalanceWallet } from "react-icons/md";
-import { loadOrCreateWalletDirect, useSdk } from "../../services";
+import {
+  loadLedgerWallet,
+  loadOrCreateWalletDirect,
+  useSdk,
+  webUsbMissing
+} from "../../services";
 import { config } from "../../config";
 import {
   configKeplr,
@@ -72,13 +77,13 @@ export function AccountButton(): JSX.Element {
     }
   }
 
-  async function connectBrowserWallet() {
+  async function connectWallet(loadWallet: WalletLoader) {
     walletOpts.onClose();
     setLoading.on();
 
     try {
       setTimeout(async () => {
-        await init(loadOrCreateWalletDirect);
+        await init(loadWallet);
       }, 500);
     } catch (error) {
       setLoading.off();
@@ -119,8 +124,13 @@ export function AccountButton(): JSX.Element {
           <ModalBody>
           <VStack spacing={4}>
             <Button colorScheme='teal' w={"240px"} variant='outline'
-              onClick={connectBrowserWallet}>
+              onClick={() => connectWallet(loadOrCreateWalletDirect)}>
               Browser wallet
+            </Button>
+            <Button colorScheme='teal' w={"240px"} variant='outline'
+              onClick={() => connectWallet(loadLedgerWallet)}
+              disabled={webUsbMissing()}>
+              Ledger wallet
             </Button>
             <Button colorScheme='teal' w={"240px"} variant='outline'
               disabled

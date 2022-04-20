@@ -131,6 +131,26 @@ import {
     prefix: "cosmos",
   };
   
+  export function serializeSignToGnoDoc(signDoc: StdSignDoc) {
+    const gnoSignDoc = {
+      chain_id: signDoc.chain_id,
+      account_number: signDoc.account_number,
+      sequence: signDoc.sequence,
+      fee: {
+        gas_fee: `${signDoc.fee.amount[0].amount}${signDoc.fee.amount[0].denom}`,
+        gas_wanted: signDoc.fee.gas,
+      },
+      msgs: signDoc.msgs.map((m) => ({
+        '@type': m.type,
+        ...m.value,
+      })),
+      memo: signDoc.memo,
+      time: "0001-01-01T00:00:00Z",
+    };
+  
+    return toUtf8(sortedJsonStringify(gnoSignDoc));
+  }
+
   export class Secp256k1HdWallet implements OfflineAminoSigner {
     /**
      * Restores a wallet from the given BIP39 mnemonic.
@@ -268,26 +288,6 @@ import {
         address: address,
       }));
     }
-  
-    private serializeSignToGnoDoc(signDoc: StdSignDoc) {
-      const gnoSignDoc = {
-        chain_id: signDoc.chain_id,
-        account_number: signDoc.account_number,
-        sequence: signDoc.sequence,
-        fee: {
-          gas_fee: `${signDoc.fee.amount[0].amount}${signDoc.fee.amount[0].denom}`,
-          gas_wanted: signDoc.fee.gas,
-        },
-        msgs: signDoc.msgs.map((m) => ({
-          '@type': m.type,
-          ...m.value,
-        })),
-        memo: signDoc.memo,
-        time: "0001-01-01T00:00:00Z",
-      };
-    
-      return toUtf8(sortedJsonStringify(gnoSignDoc));
-    }
 
     public async signAmino(signerAddress: string, signDoc: StdSignDoc): Promise<AminoSignResponse> {
       const accounts = await this.getAccountsWithPrivkeys();
@@ -296,7 +296,7 @@ import {
         throw new Error(`Address ${signerAddress} not found in wallet`);
       }
       const { privkey, pubkey } = account;
-      const message = sha256(this.serializeSignToGnoDoc(signDoc));
+      const message = sha256(serializeSignToGnoDoc(signDoc));
       const signature = await Secp256k1.createSignature(message, privkey);
       const signatureBytes = new Uint8Array([...signature.r(32), ...signature.s(32)]);
       return {
