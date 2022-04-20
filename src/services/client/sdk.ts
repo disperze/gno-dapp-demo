@@ -24,7 +24,8 @@ export async function loadKeplrWallet(chainId: string): Promise<OfflineAminoSign
 }
 
 export async function loadOrCreateWalletDirect(
-  addressPrefix: string,
+  _chainId: string,
+  addressPrefix?: string,
   pin?: string,
 ): Promise<OfflineAminoSigner> {
   const hdPath = makeCosmoshubPath(0);

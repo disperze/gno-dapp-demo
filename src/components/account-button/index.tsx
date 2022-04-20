@@ -9,7 +9,6 @@ import {
   PopoverContent,
   Box,
   chakra,
-  VStack,
   Text,
   GridItem,
   Grid,
@@ -17,9 +16,17 @@ import {
   Badge,
   useDisclosure,
   PopoverBody,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  VStack,
 } from '@chakra-ui/react';
 import { MdAccountBalanceWallet } from "react-icons/md";
-import { useSdk } from "../../services";
+import { loadOrCreateWalletDirect, useSdk } from "../../services";
 import { config } from "../../config";
 import {
   configKeplr,
@@ -28,13 +35,13 @@ import {
   formatPrice,
   getTokenConfig,
 } from "../../services";
-import { useEffect } from "react";
 import userLogo from "../../assets/user-default.svg";
 
 export function AccountButton(): JSX.Element {
   const sdk = useSdk();
   const { onOpen, onClose, isOpen } = useDisclosure()
   const [loading, setLoading] = useBoolean();
+  const walletOpts = useDisclosure();
 
   async function init(loadWallet: WalletLoader) {
     const signer = await loadWallet(config.chainId, config.addressPrefix);
@@ -48,41 +55,34 @@ export function AccountButton(): JSX.Element {
       return;
     }
 
+    walletOpts.onClose();
     setLoading.on();
 
     try {
       await w.keplr.experimentalSuggestChain(configKeplr(config));
       await w.keplr.enable(config.chainId);
       init(loadKeplrWallet);
+
+      window.addEventListener('keplr_keystorechange', async () => {
+        await init(loadKeplrWallet);
+      });
     } catch (error) {
       setLoading.off();
       console.error(error);
     }
   }
 
-  useEffect(() => {
-    window.addEventListener('keplr_keystorechange', async () => {
-      await init(loadKeplrWallet);
-    })
-  });
+  async function connectBrowserWallet() {
+    walletOpts.onClose();
+    setLoading.on();
 
-  const loginButton = (
-    <Button
-      isLoading={loading}
-      loadingText="Connecting..."
-      rightIcon={<MdAccountBalanceWallet />}
-      fontSize={'sm'}
-      fontWeight={500}
-      variant={'outline'}
-      borderRadius="50px"
-      height="var(--chakra-sizes-9)"
-      marginTop={"2px"}
-      borderColor={useColorModeValue('gray.200', 'whiteAlpha.300')}
-      onClick={connectKeplr}
-    >
-      Connect wallet
-    </Button>
-  );
+    try {
+      await init(loadOrCreateWalletDirect);
+    } catch (error) {
+      setLoading.off();
+      console.error(error);
+    }
+  }
 
   const BalanceItem = (props: any) => {
     const coin = getTokenConfig(props.coin.denom);
@@ -106,6 +106,57 @@ export function AccountButton(): JSX.Element {
       </Grid>
     );
   };
+
+  const walletModal = (
+    <>
+      <Modal isOpen={walletOpts.isOpen} onClose={walletOpts.onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Login</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+          <VStack spacing={4}>
+            <Button colorScheme='teal' w={"240px"} variant='outline'
+              onClick={connectBrowserWallet}>
+              Browser wallet
+            </Button>
+            <Button colorScheme='teal' w={"240px"} variant='outline'
+              onClick={connectKeplr}>
+              Keplr wallet
+            </Button>
+          </VStack>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme='blue' mr={3} onClick={walletOpts.onClose}>
+              Close
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </>
+  );
+
+  
+  const loginButton = (
+    <>
+      <Button
+        isLoading={loading}
+        loadingText="Connecting..."
+        rightIcon={<MdAccountBalanceWallet />}
+        fontSize={'sm'}
+        fontWeight={500}
+        variant={'outline'}
+        borderRadius="50px"
+        height="var(--chakra-sizes-9)"
+        marginTop={"2px"}
+        borderColor={useColorModeValue('gray.200', 'whiteAlpha.300')}
+        onClick={walletOpts.onOpen}
+      >
+        Connect wallet
+      </Button>
+      {walletModal}
+    </> 
+  );
 
   const accountBox = (
     <Popover
