@@ -12,14 +12,18 @@ import {
     useBoolean,
     Textarea,
     Input,
+    Link,
+    useToast,
   } from '@chakra-ui/react';
   import { useSearchParams } from 'react-router-dom';
   import { useState } from 'react';
   import { StdSignDoc } from "@cosmjs/amino";
-  import { useSdk } from '../../services';
+  import { LcdClient, parseBoards, parseResultId, useSdk } from '../../services';
   import { BaseAccount, makeGnoStdTx } from '../../services';
+import { ExternalLinkIcon } from '@chakra-ui/icons';
   
   export const NewPost = () => {
+    const toast = useToast();
     const [searchParams ] = useSearchParams();
     const { address, client, getSigner, config, refreshBalance } = useSdk();
   
@@ -64,6 +68,16 @@ import {
   
     };
   
+    const getPostUrl = async (cli: LcdClient, bid: number, data: string) => {
+      const boards = await cli.render("gno.land/r/boards");
+      const boardList = parseBoards(boards);
+      if (boardList.length > 0) {
+        const newPostId = parseResultId(data);
+        return `https://gno.land${boardList[bid-1]}/${newPostId}`;
+      }
+      return undefined;
+    };
+
     const submit = async () => {
       if (!address || !bid || !title || !body) {
         return;
@@ -85,7 +99,14 @@ import {
         const stdTx = makeGnoStdTx(signature.signed, signature.signature);
         const response = await client.broadcastTx(stdTx);
         await refreshBalance();
-        alert("Tx: " + response.hash);
+        const postUrl = await getPostUrl(client, bid, response.result.Data);
+        toast({
+          title: `Transaction Successful`,
+          description: (<Link href={postUrl} isExternal >View post <ExternalLinkIcon mx='2px' /></Link>),
+          status: "success",
+          position: "bottom-right",
+          isClosable: true,
+        });
         console.log(response);
       } catch (error) {
         alert("Error");

@@ -1,8 +1,14 @@
 import { AxiosInstance } from "axios";
-import { AccountResponse, BalanceResponse } from "./types";
+import { AccountResponse, BalanceResponse, TxResponse } from "./types";
 
 export class LcdClient {
     constructor(private instance: AxiosInstance) {
+    }
+
+    async render(realm: string, query?: string): Promise<string> {
+        const res = await this.instance.get(`/gno/render?realm=${realm}&query=${query ?? ""}`);
+        
+        return res.data;
     }
 
     async getAccount(address: string): Promise<AccountResponse> {
@@ -17,7 +23,7 @@ export class LcdClient {
         return res.data; 
     }
 
-    async broadcastTx(tx: any) {
+    async broadcastTx(tx: any): Promise<TxResponse> {
         const payload = {
             tx: tx,
         };

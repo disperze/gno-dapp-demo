@@ -31,6 +31,37 @@ export function toMinDenom(amount: number, denom: string): string {
   return Math.floor(amount * Math.pow(10, coin.decimals)).toString();
 }
 
+
+export function parseResultId(base64Data: string): string {
+  if (!base64Data) {
+    return "";
+  }
+  
+  const raw = atob(base64Data);
+  const regExp = /\((\d+) /;
+
+  const match = raw.match(regExp);
+  if (!match) {
+    return "";
+  }
+
+  return match[1];
+}
+
+export function parseBoards(raw: string): string[] {
+  if (!raw) {
+    return [];
+  }
+
+  const regExp = /\(([^)]+)\)/g;
+  const matches = raw.match(regExp);
+  if (!matches) {
+    return [];
+  }
+
+  return matches.map((str) => str.substring(1, str.length - 1));
+}
+
 export function makeGnoStdTx(
   content: StdSignDoc,
   signature: StdSignature,

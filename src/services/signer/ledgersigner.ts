@@ -4,7 +4,6 @@ import {
     encodeSecp256k1Signature,
     makeCosmoshubPath,
     OfflineAminoSigner,
-    serializeSignDoc,
     StdSignDoc,
   } from "@cosmjs/amino";
   import { HdPath } from "@cosmjs/crypto";

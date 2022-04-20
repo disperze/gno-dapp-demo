@@ -11,14 +11,18 @@ import {
   NumberInputField,
   useBoolean,
   Textarea,
+  useToast,
+  Link,
 } from '@chakra-ui/react';
 import { useSearchParams } from 'react-router-dom';
 import { useState } from 'react';
 import { StdSignDoc } from "@cosmjs/amino";
-import { useSdk } from '../../services';
+import { LcdClient, parseBoards, parseResultId, useSdk } from '../../services';
 import { BaseAccount, makeGnoStdTx } from '../../services';
+import { ExternalLinkIcon } from '@chakra-ui/icons';
 
 export const ReplyPost = () => {
+  const toast = useToast();
   const [searchParams ] = useSearchParams();
   const { address, client, getSigner, config, refreshBalance } = useSdk();
 
@@ -65,6 +69,18 @@ export const ReplyPost = () => {
 
   };
 
+  const getReplyUrl = async (cli: LcdClient, bid: number, threadid: number, data: string) => {
+    const boards = await cli.render("gno.land/r/boards");
+    const boardList = parseBoards(boards);
+    if (boardList.length > 0) {
+      const newPostId = parseResultId(data);
+      const replyUrl = `https://gno.land${boardList[bid-1]}/${threadId}/${newPostId}`
+
+      return replyUrl;
+    }
+    return undefined;
+  };
+
   const submit = async () => {
     if (!address || !bid || !threadId || !postId || !body) {
       return;
@@ -86,10 +102,24 @@ export const ReplyPost = () => {
       const stdTx = makeGnoStdTx(signature.signed, signature.signature);
       const response = await client.broadcastTx(stdTx);
       await refreshBalance();
-      alert("Tx: " + response.hash);
+      const replyUrl = await getReplyUrl(client, bid, threadId, response.result.Data);
+      toast({
+        title: `Transaction Successful`,
+        description: (<Link href={replyUrl} isExternal >View reply <ExternalLinkIcon mx='2px' /></Link>),
+        status: "success",
+        position: "bottom-right",
+        isClosable: true,
+      });
+
       console.log(response);
     } catch (error) {
-      alert("Error");
+      toast({
+        title: "Error",
+        description: `${error}`,
+        status: "error",
+        position: "bottom-right",
+        isClosable: true,
+      });
       console.log(error);
     } finally {
       setLoading.off();

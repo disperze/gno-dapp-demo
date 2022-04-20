@@ -25,4 +25,19 @@
     amount: string
   }
   
+  export interface TxResponse {
+    result: Result
+    hash: string
+    height: number
+  }
   
+  export interface Result {
+    Error: any
+    Data: string
+    Events: any
+    Log: string
+    Info: string
+    GasWanted: number
+    GasUsed: number
+  }
+
