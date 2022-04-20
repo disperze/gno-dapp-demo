@@ -77,9 +77,10 @@ export const ReplyPost = () => {
     setLoading.on();
 
     try {
-      const replyMsg = createReplyMsg(address, bid, threadId, postId, body);
+      // TODO: clear body special chars
+      const msg = createReplyMsg(address, bid, threadId, postId, body);
       const account = await client.getAccount(address);
-      const signDoc = createSignDoc(account.BaseAccount, replyMsg, 800000);
+      const signDoc = createSignDoc(account.BaseAccount, msg, 800000);
       const signature = await signer.signAmino(address, signDoc);
 
       const stdTx = makeGnoStdTx(signature.signed, signature.signature);
