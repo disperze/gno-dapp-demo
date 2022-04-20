@@ -103,7 +103,7 @@ import {
       <Stack spacing={8} mx={'auto'} maxW={'lg'}>
         <Stack align={'center'}>
           <Heading fontSize={'4xl'} textAlign={'center'}>
-            Create Reply
+            Create Post
           </Heading>
         </Stack>
         <Box
