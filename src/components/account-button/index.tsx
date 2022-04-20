@@ -36,8 +36,8 @@ export function AccountButton(): JSX.Element {
   const { onOpen, onClose, isOpen } = useDisclosure()
   const [loading, setLoading] = useBoolean();
 
-  function init(loadWallet: WalletLoader) {
-    const signer = loadWallet(config.chainId, config.addressPrefix);
+  async function init(loadWallet: WalletLoader) {
+    const signer = await loadWallet(config.chainId, config.addressPrefix);
     sdk.init(signer);
   }
 
