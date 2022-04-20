@@ -15,7 +15,7 @@ import { Transfer } from "./pages/transfer"
 import { SdkProvider } from "./services"
 import { config } from "./config";
 import { Navbar } from "./components/navbar"
-import { Post } from "./pages/post"
+import { NewPost, ReplyPost } from "./pages/post"
 
 export const App = () => (
   <ChakraProvider theme={theme}>
@@ -27,7 +27,8 @@ export const App = () => (
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="transfer" element={<Transfer />} />
-            <Route path="reply-post" element={<Post />} />
+            <Route path="create-post" element={<NewPost />} />
+            <Route path="reply-post" element={<ReplyPost />} />
           </Routes>
         </Router>
       </Grid>

@@ -18,7 +18,7 @@ import { StdSignDoc } from "@cosmjs/amino";
 import { useSdk } from '../../services';
 import { BaseAccount, makeGnoStdTx } from '../../services';
 
-export const Post = () => {
+export const ReplyPost = () => {
   const [searchParams ] = useSearchParams();
   const { address, client, getSigner, config, refreshBalance } = useSdk();
 
@@ -81,7 +81,6 @@ export const Post = () => {
       const account = await client.getAccount(address);
       const signDoc = createSignDoc(account.BaseAccount, replyMsg, 800000);
       const signature = await signer.signAmino(address, signDoc);
-      console.log(signature);
 
       const stdTx = makeGnoStdTx(signature.signed, signature.signature);
       const response = await client.broadcastTx(stdTx);
@@ -164,5 +163,5 @@ return (
       </Box>
     </Stack>
   </Flex>
-);
+ );
 };
