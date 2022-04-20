@@ -171,6 +171,7 @@ export function AccountButton(): JSX.Element {
     </> 
   );
 
+  const balance = sdk.balance.length > 0 ? sdk.balance : [{ denom: 'gnot', amount: '0' }];
   const accountBox = (
     <Popover
       isOpen={isOpen}
@@ -198,7 +199,7 @@ export function AccountButton(): JSX.Element {
               <Text fontSize="md" fontWeight="semibold">{sdk.address}</Text>
             </Box>
             <Box py={2}>
-              {sdk.balance.map(coin => (
+              {balance.map(coin => (
                 <BalanceItem key={coin.denom} coin={coin} />
               ))}
             </Box>

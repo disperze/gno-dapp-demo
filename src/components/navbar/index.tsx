@@ -20,6 +20,7 @@ import {
   HamburgerIcon,
   CloseIcon,
   ChevronDownIcon,
+  ExternalLinkIcon,
 } from '@chakra-ui/icons';
 import { ColorModeSwitcher } from "../../ColorModeSwitcher";
 import { AccountButton } from "../account-button";
@@ -104,6 +105,9 @@ const DesktopNav = () => {
           Pages
         </MenuButton>
         <MenuList>
+        <MenuItem>
+            <Link w="full" href="https://gno.land/faucet" isExternal>Faucet <ExternalLinkIcon mx='2px' /></Link>
+          </MenuItem>
           <MenuItem>
             <Link as={ReactRouterLink} w="full" to='/transfer'>Transfer</Link>
           </MenuItem>
