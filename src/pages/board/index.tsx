@@ -18,9 +18,9 @@ import {
     FormLabel,
     FormControl,
     Textarea,
-    chakra,
     useColorModeValue,
     Flex,
+    useColorMode,
 } from '@chakra-ui/react';
 import {
   ChatIcon
@@ -32,6 +32,8 @@ import ReactMarkdown from 'react-markdown';
 import ChakraUIRenderer from 'chakra-ui-markdown-renderer';
 import remarkGfm from 'remark-gfm';
 import emoji from 'remark-emoji';
+import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
+import { darcula } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 interface ReplyArgs {
     bid: number;
@@ -56,10 +58,8 @@ function Cards(props: any){
         bg={useColorModeValue("white", "gray.800")}
         w="full"
       >
-        <Box mt={2}>
-          <chakra.p color={useColorModeValue("gray.600", "gray.300")}>
-            {props.children}
-          </chakra.p>
+        <Box mt={2} color={useColorModeValue("gray.600", "gray.300")}>
+        {props.children}
         </Box>
       </Box>
     </Flex>
@@ -69,6 +69,7 @@ function Cards(props: any){
 export const Board = () => {
     const toast = useToast();
     const location = useLocation();
+    const { colorMode } = useColorMode();
     const { address, client, config, getSigner, balance, refreshBalance } = useSdk();
     const [loading, setLoading] = useBoolean();
     const { onOpen, onClose, isOpen } = useDisclosure()
@@ -246,6 +247,23 @@ export const Board = () => {
             </Cards>
           );
         },
+        code: ({node, inline, className, children, ...props}: any) => {
+          const match = /language-(\w+)/.exec(className || '')
+          return !inline && match ? (
+            <SyntaxHighlighter
+              children={String(children).replace(/\n$/, '')}
+              {...(colorMode === "dark" && {style: darcula})}
+              language={match[1]}
+              PreTag="div"
+              customStyle={{maxWidth: "94vw"}}
+              {...props}
+            />
+          ) : (
+            <code className={className} {...props}>
+              {children}
+            </code>
+          )
+        }  
     };
 
     const bodyData = body ? 
