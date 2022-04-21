@@ -18,6 +18,9 @@ import {
     FormLabel,
     FormControl,
     Textarea,
+    chakra,
+    useColorModeValue,
+    Flex,
 } from '@chakra-ui/react';
 import {
   ChatIcon
@@ -35,6 +38,33 @@ interface ReplyArgs {
     threadId: number;
     postId: number;
 }
+
+function Cards(props: any){
+  return (
+    <Flex
+      // bg={useColorModeValue("#F9FAFB", "gray.600")}
+      py={3} px={4}
+      w="full"
+    >
+      <Box
+        px={8}
+        py={4}
+        rounded="lg"
+        shadow="lg"
+        borderColor={useColorModeValue("gray.200", "gray.600")}
+        borderWidth={1}
+        bg={useColorModeValue("white", "gray.800")}
+        w="full"
+      >
+        <Box mt={2}>
+          <chakra.p color={useColorModeValue("gray.600", "gray.300")}>
+            {props.children}
+          </chakra.p>
+        </Box>
+      </Box>
+    </Flex>
+  );
+};
 
 export const Board = () => {
     const toast = useToast();
@@ -206,6 +236,14 @@ export const Board = () => {
             <Link textDecoration="underline" href={href} isExternal>
               {children}
             </Link>
+          );
+        },
+        blockquote: (props: any) => {
+          const { children } = props;
+          return (
+            <Cards>
+              {children}
+            </Cards>
           );
         },
     };
