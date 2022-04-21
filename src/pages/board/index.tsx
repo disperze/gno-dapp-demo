@@ -19,6 +19,9 @@ import {
     FormControl,
     Textarea,
 } from '@chakra-ui/react';
+import {
+  ChatIcon
+} from '@chakra-ui/icons';
 import { Link as ReactRouterLink, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { createReplyMsg, createSignDoc, ellideMiddle, makeGnoStdTx, useSdk } from '../../services';
@@ -177,7 +180,7 @@ export const Board = () => {
                   return (
                     <Button colorScheme='teal' variant='link'
                         onClick={() => openReplyModal(queryParams)}>
-                        {children}
+                        <ChatIcon mr='2px' h={3}/> {children}
                     </Button>
                   );
               }
