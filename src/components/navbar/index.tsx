@@ -114,9 +114,9 @@ const DesktopNav = () => {
           <MenuItem>
             <Link as={ReactRouterLink} w="full" to='/create-post'>Create Post</Link>
           </MenuItem>
-          <MenuItem>
+          {/* <MenuItem>
             <Link as={ReactRouterLink} w="full" to='/reply-post'>Reply Post</Link>
-          </MenuItem>
+          </MenuItem> */}
         </MenuList>
       </Menu>
     </Stack>
