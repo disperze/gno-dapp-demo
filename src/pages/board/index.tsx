@@ -39,7 +39,7 @@ interface ReplyArgs {
 export const Board = () => {
     const toast = useToast();
     const location = useLocation();
-    const { address, client, config, getSigner, refreshBalance } = useSdk();
+    const { address, client, config, getSigner, balance, refreshBalance } = useSdk();
     const [loading, setLoading] = useBoolean();
     const { onOpen, onClose, isOpen } = useDisclosure()
     
@@ -87,6 +87,17 @@ export const Board = () => {
 
         const signer = getSigner();
         if (!client || !signer) {
+          return;
+        }
+
+        if (!balance || balance.length === 0 || Number(balance[0].amount) < 1) {
+          toast({
+            title: "Error",
+            description: `You need at least 0.000001 GNOT.`,
+            status: "error",
+            position: "bottom-right",
+            isClosable: true,
+          });
           return;
         }
     
