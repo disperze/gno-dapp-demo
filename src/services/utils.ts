@@ -1,5 +1,7 @@
 import { coins, Token } from "../config";
 import { StdSignDoc, StdSignature } from "@cosmjs/amino";
+import { BaseAccount } from "./types";
+import { AppConfig } from "./config";
 
 export function formatAddress(wallet: string): string {
   return ellideMiddle(wallet, 24);
@@ -60,6 +62,38 @@ export function parseBoards(raw: string): string[] {
   }
 
   return matches.map((str) => str.substring(1, str.length - 1));
+}
+
+export function createSignDoc(account: BaseAccount, msg: any, config: Partial<AppConfig>, gas: number): StdSignDoc {
+  return {
+    msgs: [msg],
+    fee: { amount: [{
+      amount: "1",
+      denom: config.token.coinMinimalDenom
+    }], gas: gas.toString() },
+    chain_id: config.chainId!,
+    memo: "",
+    account_number: account.account_number,
+    sequence: account.sequence,
+  };
+}
+
+export function createReplyMsg(sender: string, bid: number, threadid: number, postid: number, body: string) {
+  return  {
+    type: "/vm.m_call",
+    value: {
+      caller: sender,
+      send: "",
+      pkg_path: "gno.land/r/boards",
+      func: "CreateReply",
+      args: [
+        bid.toString(),
+        threadid.toString(),
+        postid.toString(),
+        body
+      ]
+    }
+  };
 }
 
 export function makeGnoStdTx(

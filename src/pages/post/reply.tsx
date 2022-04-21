@@ -16,9 +16,8 @@ import {
 } from '@chakra-ui/react';
 import { useSearchParams } from 'react-router-dom';
 import { useState } from 'react';
-import { StdSignDoc } from "@cosmjs/amino";
-import { LcdClient, parseBoards, parseResultId, useSdk } from '../../services';
-import { BaseAccount, makeGnoStdTx } from '../../services';
+import { createReplyMsg, createSignDoc, LcdClient, parseBoards, parseResultId, useSdk } from '../../services';
+import { makeGnoStdTx } from '../../services';
 
 export const ReplyPost = () => {
   const toast = useToast();
@@ -34,39 +33,6 @@ export const ReplyPost = () => {
   function getQueryInt(key: string): number {
     return parseInt(searchParams.get(key) ?? '0');
   }
-
-  const createReplyMsg = (sender: string, bid: number, threadid: number, postid: number, body: string) => {
-    return  {
-      type: "/vm.m_call",
-      value: {
-        caller: sender,
-        send: "",
-        pkg_path: "gno.land/r/boards",
-        func: "CreateReply",
-        args: [
-          bid.toString(),
-          threadid.toString(),
-          postid.toString(),
-          body
-        ]
-      }
-    };
-  }
-
-  const createSignDoc = (account: BaseAccount, msg: any, gas: number): StdSignDoc => {
-    return {
-      msgs: [msg],
-      fee: { amount: [{
-        amount: "1",
-        denom: config.token.coinMinimalDenom
-      }], gas: gas.toString() },
-      chain_id: config.chainId!,
-      memo: "",
-      account_number: account.account_number,
-      sequence: account.sequence,
-    };
-
-  };
 
   const getReplyUrl = async (cli: LcdClient, bid: number, threadid: number, data: string) => {
     const boards = await cli.render("gno.land/r/boards");
@@ -95,7 +61,7 @@ export const ReplyPost = () => {
       // TODO: clear body special chars
       const msg = createReplyMsg(address, bid, threadId, postId, body);
       const account = await client.getAccount(address);
-      const signDoc = createSignDoc(account.BaseAccount, msg, 2000000);
+      const signDoc = createSignDoc(account.BaseAccount, msg, config, 2000000);
       const signature = await signer.signAmino(address, signDoc);
 
       const stdTx = makeGnoStdTx(signature.signed, signature.signature);
