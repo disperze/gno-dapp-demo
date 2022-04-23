@@ -96,6 +96,24 @@ export function createReplyMsg(sender: string, bid: number, threadid: number, po
   };
 }
 
+export function createDeleteMsg(sender: string, bid: number, threadid: number, postid: number, reason: string) {
+  return  {
+    type: "/vm.m_call",
+    value: {
+      caller: sender,
+      send: "",
+      pkg_path: "gno.land/r/boards",
+      func: "DeletePost",
+      args: [
+        bid.toString(),
+        threadid.toString(),
+        postid.toString(),
+        reason
+      ]
+    }
+  };
+}
+
 export function makeGnoStdTx(
   content: StdSignDoc,
   signature: StdSignature,

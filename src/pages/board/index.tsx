@@ -23,11 +23,12 @@ import {
     useColorMode,
 } from '@chakra-ui/react';
 import {
-  ChatIcon
+  ChatIcon,
+  DeleteIcon,
 } from '@chakra-ui/icons';
 import { Link as ReactRouterLink, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { createReplyMsg, createSignDoc, ellideMiddle, makeGnoStdTx, useSdk } from '../../services';
+import { createDeleteMsg, createReplyMsg, createSignDoc, ellideMiddle, makeGnoStdTx, useSdk } from '../../services';
 import ReactMarkdown from 'react-markdown';
 import ChakraUIRenderer from 'chakra-ui-markdown-renderer';
 import remarkGfm from 'remark-gfm';
@@ -36,6 +37,7 @@ import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 import { darcula } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 interface ReplyArgs {
+    isReply: boolean,
     bid: number;
     threadId: number;
     postId: number;
@@ -135,7 +137,8 @@ export const Board = () => {
         setLoading.on();
     
         try {
-          const msg = createReplyMsg(address, replyParams.bid, replyParams.threadId, replyParams.postId, message);
+          const msg = replyParams.isReply ? createReplyMsg(address, replyParams.bid, replyParams.threadId, replyParams.postId, message)
+          : createDeleteMsg(address, replyParams.bid, replyParams.threadId, replyParams.postId, message);;
           const account = await client.getAccount(address);
           const signDoc = createSignDoc(account.BaseAccount, msg, config, 2000000);
           const signature = await signer.signAmino(address, signDoc);
@@ -167,8 +170,9 @@ export const Board = () => {
         }
       };
 
-      const openReplyModal = (params: any) => {
+      const openReplyModal = (params: any, reply?: boolean) => {
         const newParams: ReplyArgs = {
+            isReply: reply ?? true,
             bid: Number(params.bid),
             threadId: Number(params.threadid),
             postId: Number(params.postid),
@@ -182,11 +186,11 @@ export const Board = () => {
           <Modal isOpen={isOpen} onClose={onClose}>
             <ModalOverlay />
             <ModalContent>
-              <ModalHeader>CreateReply</ModalHeader>
+              <ModalHeader>{replyParams?.isReply ? "CreateReply" : "DeletePost"}</ModalHeader>
               <ModalCloseButton />
               <ModalBody>
                 <FormControl id="message">
-                    <FormLabel>Message</FormLabel>
+                    <FormLabel>{replyParams?.isReply ? "Message" : "Reason"}</FormLabel>
                     <Textarea
                         onChange={(e) => setMessage(e.target.value)}
                         size='lg'
@@ -199,7 +203,7 @@ export const Board = () => {
                     isLoading={loading}
                     colorScheme='blue'
                     onClick={submitReply}>
-                  Post
+                  {replyParams?.isReply ? "Post" : "Delete"}
                 </Button>
               </ModalFooter>
             </ModalContent>
@@ -207,22 +211,39 @@ export const Board = () => {
         </>
       );
 
+    const parseQueryParams = (url: string) => {
+      const queryParams: any = {}; 
+      url.split('&').forEach((param: string) => {
+          const [key, value] = param.split('=');
+          queryParams[key] = value;
+      });
+
+      return queryParams;
+    };
     const newTheme = {
         a: (props: any) => {
           const { children, href } = props;
           if (href.startsWith('/')) {
               const replyUrl = '/r/boards?help&__func=CreateReply&';
               if (href.startsWith(replyUrl)) {
-                  const queryParams: any = {}; 
-                  href.replace(replyUrl, '').split('&').forEach((param: string) => {
-                      const [key, value] = param.split('=');
-                      queryParams[key] = value;
-                  });
+                  const queryParams = parseQueryParams(href.replace(replyUrl, '')); 
 
                   return (
                     <Button colorScheme='teal' variant='link'
                         onClick={() => openReplyModal(queryParams)}>
                         <ChatIcon mr='2px' h={3}/> {children}
+                    </Button>
+                  );
+              }
+
+              const deleteUrl = '/r/boards?help&__func=DeletePost&';
+              if (href.startsWith(deleteUrl)) {
+                  const queryParams = parseQueryParams(href.replace(deleteUrl, '')); 
+
+                  return (
+                    <Button colorScheme='teal' variant='link'
+                        onClick={() => openReplyModal(queryParams, false)}>
+                        <DeleteIcon mr='2px' h={3}/> 
                     </Button>
                   );
               }
