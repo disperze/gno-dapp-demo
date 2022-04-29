@@ -1,6 +1,7 @@
 import * as React from "react"
 import {
   BrowserRouter as Router,
+  Navigate,
   Routes,
   Route,
 } from "react-router-dom"
@@ -15,7 +16,7 @@ import { Transfer } from "./pages/transfer"
 import { SdkProvider } from "./services"
 import { config } from "./config";
 import { Navbar } from "./components/navbar"
-import { NewPost, ReplyPost } from "./pages/post"
+import { NewPost } from "./pages/post"
 import { Board } from "./pages/board"
 
 export const App = () => (
@@ -29,7 +30,7 @@ export const App = () => (
             <Route path="/" element={<Home />} />
             <Route path="transfer" element={<Transfer />} />
             <Route path="create-post" element={<NewPost />} />
-            <Route path="reply-post" element={<ReplyPost />} />
+            <Route path="reply-post" element={<Navigate to="/r/boards:gnolang/8" replace />} />
             <Route path="r/*" element={<Board />} />
           </Routes>
         </Router>
