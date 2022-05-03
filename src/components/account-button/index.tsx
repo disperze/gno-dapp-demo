@@ -73,6 +73,9 @@ export function AccountButton(): JSX.Element {
       });
     } catch (error) {
       setLoading.off();
+      if (`${error}`.includes("features")) {
+        alert(`Keplr v${w.keplr?.version} does not support GNO chain`);
+      }
       console.error(error);
     }
   }
@@ -133,7 +136,6 @@ export function AccountButton(): JSX.Element {
               Ledger wallet
             </Button>
             <Button colorScheme='teal' w={"240px"} variant='outline'
-              disabled
               onClick={connectKeplr}>
               Keplr wallet
             </Button>
