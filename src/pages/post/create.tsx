@@ -17,7 +17,7 @@ import {
   } from '@chakra-ui/react';
   import { useSearchParams } from 'react-router-dom';
   import { useState } from 'react';
-  import { createSignDoc, LcdClient, parseBoards, parseResultId, useSdk } from '../../services';
+  import { createPostMsg, createSignDoc, LcdClient, parseBoards, parseResultId, useSdk } from '../../services';
   import { makeGnoStdTx } from '../../services';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
   
@@ -33,23 +33,6 @@ import { ExternalLinkIcon } from '@chakra-ui/icons';
   
     function getQueryInt(key: string): number {
       return parseInt(searchParams.get(key) ?? '0');
-    }
-  
-    const createPostMsg = (sender: string, bid: number, title: string, body: string) => {
-      return  {
-        type: "/vm.m_call",
-        value: {
-          caller: sender,
-          send: "",
-          pkg_path: "gno.land/r/boards",
-          func: "CreatePost",
-          args: [
-            bid.toString(),
-            title,
-            body
-          ]
-        }
-      };
     }
   
     const getPostUrl = async (cli: LcdClient, bid: number, data: string) => {

@@ -96,6 +96,23 @@ export function createReplyMsg(sender: string, bid: number, threadid: number, po
   };
 }
 
+export function createPostMsg(sender: string, bid: number, title: string, body: string) {
+  return  {
+    type: "/vm.m_call",
+    value: {
+      caller: sender,
+      send: "",
+      pkg_path: "gno.land/r/boards",
+      func: "CreatePost",
+      args: [
+        bid.toString(),
+        title,
+        body
+      ]
+    }
+  };
+}
+
 export function createDeleteMsg(sender: string, bid: number, threadid: number, postid: number, reason: string) {
   return  {
     type: "/vm.m_call",
