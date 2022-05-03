@@ -148,7 +148,7 @@ export function makeGnoStdTx(
     signatures: [
       {
         pub_key: {
-          "@type": "/tm.PubKeySecp256k1",
+          "@type": signature.pub_key.type,
           value: signature.pub_key.value,
         },
         signature: signature.signature,

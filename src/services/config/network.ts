@@ -52,6 +52,6 @@ export function configKeplr(config: AppConfig): any {
     },
     bip44: { coinType: 118 },
     coinType: 118,
-    features: []
+    features: ["gno"]
   };
 }

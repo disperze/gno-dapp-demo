@@ -57,7 +57,7 @@ import { ExternalLinkIcon } from '@chakra-ui/icons';
       setLoading.on();
   
       try {
-        // TODO: clear body special chars
+        // TODO: clear body special characters
         const msg = createPostMsg(address, bid, title, body);
         const account = await client.getAccount(address);
         const signDoc = createSignDoc(account.BaseAccount, msg, config, 2000000);

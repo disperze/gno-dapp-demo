@@ -113,7 +113,7 @@ export const Board = () => {
         }
     };
 
-    const submitReply = async () => {
+    const submitAction = async () => {
         if (!address || !replyParams || !message) {
           return;
         }
@@ -142,7 +142,7 @@ export const Board = () => {
           const account = await client.getAccount(address);
           const signDoc = createSignDoc(account.BaseAccount, msg, config, 2000000);
           const signature = await signer.signAmino(address, signDoc);
-    
+          console.log(signature);
           const stdTx = makeGnoStdTx(signature.signed, signature.signature);
           const response = await client.broadcastTx(stdTx);
           toast({
@@ -202,7 +202,7 @@ export const Board = () => {
                     disabled={!address}
                     isLoading={loading}
                     colorScheme='blue'
-                    onClick={submitReply}>
+                    onClick={submitAction}>
                   {replyParams?.isReply ? "Post" : "Delete"}
                 </Button>
               </ModalFooter>
