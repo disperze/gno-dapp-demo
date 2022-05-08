@@ -28,7 +28,7 @@ import {
 } from '@chakra-ui/icons';
 import { Link as ReactRouterLink, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { createDeleteMsg, createReplyMsg, createSignDoc, ellideMiddle, makeGnoStdTx, useSdk } from '../../services';
+import { createDeleteMsg, createReplyMsg, createSignDoc, ellideMiddle, makeProtoTx, useSdk } from '../../services';
 import ReactMarkdown from 'react-markdown';
 import ChakraUIRenderer from 'chakra-ui-markdown-renderer';
 import remarkGfm from 'remark-gfm';
@@ -143,8 +143,9 @@ export const Board = () => {
           const signDoc = createSignDoc(account.BaseAccount, msg, config, 2000000);
           const signature = await signer.signAmino(address, signDoc);
           console.log(signature);
-          const stdTx = makeGnoStdTx(signature.signed, signature.signature);
-          const response = await client.broadcastTx(stdTx);
+          // const stdTx = makeGnoStdTx(signature.signed, signature.signature);
+          const txBytes = makeProtoTx(signature.signed, signature.signature);
+          const response = await client.broadcastTx(txBytes);
           toast({
             title: `Transaction Successful`,
             description: `${ellideMiddle(response.hash, 28)}`,

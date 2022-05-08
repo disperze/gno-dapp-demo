@@ -16,8 +16,7 @@ import {
 } from '@chakra-ui/react';
 import { useSearchParams } from 'react-router-dom';
 import { useState } from 'react';
-import { createReplyMsg, createSignDoc, LcdClient, parseBoards, parseResultId, useSdk } from '../../services';
-import { makeGnoStdTx } from '../../services';
+import { createReplyMsg, createSignDoc, LcdClient, parseBoards, parseResultId, useSdk, makeProtoTx } from '../../services';
 
 export const ReplyPost = () => {
   const toast = useToast();
@@ -64,7 +63,7 @@ export const ReplyPost = () => {
       const signDoc = createSignDoc(account.BaseAccount, msg, config, 2000000);
       const signature = await signer.signAmino(address, signDoc);
 
-      const stdTx = makeGnoStdTx(signature.signed, signature.signature);
+      const stdTx = makeProtoTx(signature.signed, signature.signature);
       const response = await client.broadcastTx(stdTx);
       await refreshBalance();
       const replyUrl = await getReplyUrl(client, bid, threadId, response.result.Data);

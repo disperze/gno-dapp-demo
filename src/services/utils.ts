@@ -2,6 +2,13 @@ import { coins, Token } from "../config";
 import { StdSignDoc, StdSignature } from "@cosmjs/amino";
 import { BaseAccount } from "./types";
 import { AppConfig } from "./config";
+import { Tx, Signature, Fee } from 'gnojs-types/gnoland/tx/tx';
+import { MsgCall } from "gnojs-types/gnoland/vm/msg";
+import { MsgSend } from "gnojs-types/gnoland/bank/msg";
+import { PubKeySecp256k1 } from 'gnojs-types/gnoland/tm/keys';
+import { Any } from "gnojs-types/google/protobuf/any";
+import { Int53 } from "@cosmjs/math";
+import Long from 'long';
 
 export function formatAddress(wallet: string): string {
   return ellideMiddle(wallet, 24);
@@ -129,6 +136,60 @@ export function createDeleteMsg(sender: string, bid: number, threadid: number, p
       ]
     }
   };
+}
+
+export function encodeType(type: string, msg: any) {
+  switch (type) {
+    case "/vm.m_call":
+      return MsgCall.encode({
+        caller: msg.caller,
+        send: msg.send,
+        pkgPath: msg.pkg_path,
+        func: msg.func,
+        args: msg.args,
+      }).finish();
+    case "/bank.MsgSend":
+      return MsgSend.encode({
+        fromAddress: msg.from_address,
+        toAddress: msg.to_address,
+        amount: msg.amount,
+      }).finish();
+    default:
+      throw new Error("Unknown type: " + type);
+  }
+}
+
+export function makeProtoTx(
+  content: StdSignDoc,
+  signature: StdSignature,
+): Uint8Array {
+  const gasWanted = Int53.fromString(content.fee.gas).toNumber();
+
+  const tx = Tx.fromPartial({
+    messages: content.msgs.map((m: any) => Any.fromPartial({
+      typeUrl: m.type,
+      value: encodeType(m.type, m.value),
+    })),
+    fee: Fee.fromPartial({
+      gasWanted: Long.fromNumber(gasWanted),
+      gasFee: `${content.fee.amount[0].amount}${content.fee.amount[0].denom}`,
+    }),
+    signatures: [
+      Signature.fromPartial({
+        pubKey: Any.fromPartial({
+          typeUrl: signature.pub_key.type,
+          value: PubKeySecp256k1.encode({
+            key: signature.pub_key.value,
+          }).finish(),
+        }),
+        signature: Buffer.from(signature.signature, 'base64')
+      })
+    ],
+    memo: content.memo,
+  });
+  console.log(tx);
+
+  return Tx.encode(tx).finish();
 }
 
 export function makeGnoStdTx(

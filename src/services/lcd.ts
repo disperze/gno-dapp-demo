@@ -23,12 +23,12 @@ export class LcdClient {
         return res.data; 
     }
 
-    async broadcastTx(tx: any): Promise<TxResponse> {
+    async broadcastTx(tx: Uint8Array): Promise<TxResponse> {
         const payload = {
-            tx: tx,
+            tx: Buffer.from(tx).toString("base64"),
         };
 
-        const res = await this.instance.post("/txs", JSON.stringify(payload), {
+        const res = await this.instance.post("/cosmos/tx/v1beta1/txs", JSON.stringify(payload), {
             headers: {
                 'Content-Type': 'application/json'
             }

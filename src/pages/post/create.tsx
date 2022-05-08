@@ -14,14 +14,14 @@ import {
     Input,
     Link,
     useToast,
-  } from '@chakra-ui/react';
-  import { useSearchParams } from 'react-router-dom';
-  import { useState } from 'react';
-  import { createPostMsg, createSignDoc, LcdClient, parseBoards, parseResultId, useSdk } from '../../services';
-  import { makeGnoStdTx } from '../../services';
+} from '@chakra-ui/react';
+import { useSearchParams } from 'react-router-dom';
+import { useState } from 'react';
+import { createPostMsg, createSignDoc, LcdClient, makeProtoTx, parseBoards, parseResultId, useSdk } from '../../services';
+
 import { ExternalLinkIcon } from '@chakra-ui/icons';
   
-  export const NewPost = () => {
+export const NewPost = () => {
     const toast = useToast();
     const [searchParams ] = useSearchParams();
     const { address, client, getSigner, config, refreshBalance } = useSdk();
@@ -63,7 +63,7 @@ import { ExternalLinkIcon } from '@chakra-ui/icons';
         const signDoc = createSignDoc(account.BaseAccount, msg, config, 2000000);
         const signature = await signer.signAmino(address, signDoc);
   
-        const stdTx = makeGnoStdTx(signature.signed, signature.signature);
+        const stdTx = makeProtoTx(signature.signed, signature.signature);
         const response = await client.broadcastTx(stdTx);
         await refreshBalance();
         const postUrl = await getPostUrl(client, bid, response.result.Data);

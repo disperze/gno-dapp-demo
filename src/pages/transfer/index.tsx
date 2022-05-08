@@ -15,7 +15,7 @@ import {
 import { useState } from 'react';
 import { StdSignDoc } from "@cosmjs/amino";
 import { useSdk } from '../../services';
-import { BaseAccount, makeGnoStdTx } from '../../services';
+import { BaseAccount, makeProtoTx } from '../../services';
 
 export const Transfer = () => {
     const { address, client, getSigner, config, refreshBalance } = useSdk();
@@ -66,8 +66,8 @@ export const Transfer = () => {
         const signature = await signer.signAmino(address, signDoc);
         console.log(signature);
   
-        const stdTx = makeGnoStdTx(signature.signed, signature.signature);
-        const response = await client.broadcastTx(stdTx);
+        const txBz = makeProtoTx(signature.signed, signature.signature);
+        const response = await client.broadcastTx(txBz);
         await refreshBalance();
         alert("Tx: " + response.hash);
         console.log(response);
