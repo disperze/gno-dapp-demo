@@ -28,7 +28,14 @@ import {
 } from '@chakra-ui/icons';
 import { Link as ReactRouterLink, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { createDeleteMsg, createReplyMsg, createSignDoc, ellideMiddle, makeProtoTx, useSdk } from '../../services';
+import {
+  createDeleteMsg,
+  createReplyMsg,
+  createSignDoc,
+  ellideMiddle,
+  makeProtoTx,
+  useSdk
+} from '../../services';
 import ReactMarkdown from 'react-markdown';
 import ChakraUIRenderer from 'chakra-ui-markdown-renderer';
 import remarkGfm from 'remark-gfm';

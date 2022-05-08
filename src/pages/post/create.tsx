@@ -17,7 +17,15 @@ import {
 } from '@chakra-ui/react';
 import { useSearchParams } from 'react-router-dom';
 import { useState } from 'react';
-import { createPostMsg, createSignDoc, LcdClient, makeProtoTx, parseBoards, parseResultId, useSdk } from '../../services';
+import {
+  createPostMsg,
+  createSignDoc,
+  LcdClient,
+  makeProtoTx,
+  parseBoards,
+  parseResultId,
+  useSdk
+} from '../../services';
 
 import { ExternalLinkIcon } from '@chakra-ui/icons';
   
