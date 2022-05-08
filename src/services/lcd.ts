@@ -25,7 +25,8 @@ export class LcdClient {
 
     async broadcastTx(tx: Uint8Array): Promise<TxResponse> {
         const payload = {
-            tx: Buffer.from(tx).toString("base64"),
+            tx_bytes: Buffer.from(tx).toString("base64"),
+            mode: "BROADCAST_MODE_BLOCK",
         };
 
         const res = await this.instance.post("/cosmos/tx/v1beta1/txs", JSON.stringify(payload), {

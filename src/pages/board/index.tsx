@@ -153,6 +153,7 @@ export const Board = () => {
           // const stdTx = makeGnoStdTx(signature.signed, signature.signature);
           const txBytes = makeProtoTx(signature.signed, signature.signature);
           const response = await client.broadcastTx(txBytes);
+          // const response = await (window as any).keplr.sendTx("testchain", txBytes, "block");
           toast({
             title: `Transaction Successful`,
             description: `${ellideMiddle(response.hash, 28)}`,
