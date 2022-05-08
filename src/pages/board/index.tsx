@@ -186,6 +186,7 @@ export const Board = () => {
             postId: Number(params.postid),
         };
         setReplyParams(newParams);
+        setMessage("");
         onOpen();
     };
 
