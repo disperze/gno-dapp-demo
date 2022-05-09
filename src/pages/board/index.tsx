@@ -147,16 +147,16 @@ export const Board = () => {
           const msg = replyParams.isReply ? createReplyMsg(address, replyParams.bid, replyParams.threadId, replyParams.postId, message)
           : createDeleteMsg(address, replyParams.bid, replyParams.threadId, replyParams.postId, message);;
           const account = await client.getAccount(address);
-          const signDoc = createSignDoc(account.BaseAccount, msg, config, 2000000);
+          const signDoc = createSignDoc(account, msg, config, 2000000);
           const signature = await signer.signAmino(address, signDoc);
-          console.log(signature);
           // const stdTx = makeGnoStdTx(signature.signed, signature.signature);
           const txBytes = makeProtoTx(signature.signed, signature.signature);
           const response = await client.broadcastTx(txBytes);
-          // const response = await (window as any).keplr.sendTx("testchain", txBytes, "block");
+          // const txHash: Uint8Array = await (window as any).keplr.sendTx("testchain", txBytes, "block");
+          console.log(response);
           toast({
             title: `Transaction Successful`,
-            description: `${ellideMiddle(response.hash, 28)}`,
+            description: `${ellideMiddle(response.txhash, 28)}`,
             status: "success",
             position: "bottom-right",
             isClosable: true,

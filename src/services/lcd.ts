@@ -1,5 +1,5 @@
 import { AxiosInstance } from "axios";
-import { AccountResponse, BalanceResponse, TxResponse } from "./types";
+import { BalanceResponse, BaseAccount, TxResponse } from "./types";
 
 export class LcdClient {
     constructor(private instance: AxiosInstance) {
@@ -11,10 +11,10 @@ export class LcdClient {
         return res.data;
     }
 
-    async getAccount(address: string): Promise<AccountResponse> {
+    async getAccount(address: string): Promise<BaseAccount> {
         const res = await this.instance.get(`/cosmos/auth/v1beta1/accounts/${address}`);
         
-        return res.data;
+        return res.data.account;
     }
 
     async getBalance(address: string): Promise<BalanceResponse> {
@@ -35,6 +35,15 @@ export class LcdClient {
             }
         });
 
-        return res.data;
+        const txResponse: TxResponse = res.data["tx_response"];
+        if (txResponse.code) {
+            let log = txResponse.raw_log;
+            if (log) {
+                log = log.split("\n")[0];
+            }
+            throw new Error(log);
+        }
+
+        return txResponse;
     }
 }

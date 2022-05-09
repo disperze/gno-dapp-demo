@@ -61,7 +61,7 @@ export const Transfer = () => {
 
       try {
         const account = await client.getAccount(address);
-        const signDoc = createSignDoc(account.BaseAccount, recipient, amount * 10**6, 60000);
+        const signDoc = createSignDoc(account, recipient, amount * 10**6, 60000);
         console.log(signDoc);
         const signature = await signer.signAmino(address, signDoc);
         console.log(signature);
@@ -69,7 +69,7 @@ export const Transfer = () => {
         const txBz = makeProtoTx(signature.signed, signature.signature);
         const response = await client.broadcastTx(txBz);
         await refreshBalance();
-        alert("Tx: " + response.hash);
+        alert("Tx: " + response.txhash);
         console.log(response);
       } catch (error) {
         alert("Error");

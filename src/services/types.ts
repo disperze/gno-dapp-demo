@@ -1,11 +1,10 @@
   export interface AccountResponse {
-    BaseAccount: BaseAccount
+    account: BaseAccount
   }
   
   export interface BaseAccount {
     address: string
-    coins: string
-    public_key: PublicKey
+    pub_key: PublicKey
     account_number: string
     sequence: string
   }
@@ -26,18 +25,13 @@
   }
   
   export interface TxResponse {
-    result: Result
-    hash: string
+    txhash: string
     height: number
+    code: number
+    gas_wanted: number
+    gas_used: number
+    data: string
+    raw_log: string
   }
   
-  export interface Result {
-    Error: any
-    Data: string
-    Events: any
-    Log: string
-    Info: string
-    GasWanted: number
-    GasUsed: number
-  }
 

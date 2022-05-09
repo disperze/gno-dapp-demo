@@ -68,13 +68,13 @@ export const NewPost = () => {
         // TODO: clear body special characters
         const msg = createPostMsg(address, bid, title, body);
         const account = await client.getAccount(address);
-        const signDoc = createSignDoc(account.BaseAccount, msg, config, 2000000);
+        const signDoc = createSignDoc(account, msg, config, 2000000);
         const signature = await signer.signAmino(address, signDoc);
   
         const stdTx = makeProtoTx(signature.signed, signature.signature);
         const response = await client.broadcastTx(stdTx);
         await refreshBalance();
-        const postUrl = await getPostUrl(client, bid, response.result.Data);
+        const postUrl = await getPostUrl(client, bid, response.data);
         toast({
           title: `Transaction Successful`,
           description: (<Link href={postUrl} isExternal >View post <ExternalLinkIcon mx='2px' /></Link>),

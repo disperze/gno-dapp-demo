@@ -125,7 +125,6 @@ export function createSignDoc(account: BaseAccount, msg: any, config: Partial<Ap
       ],
       memo: content.memo,
     });
-    console.log(tx);
   
     return Tx.encode(tx).finish();
   }

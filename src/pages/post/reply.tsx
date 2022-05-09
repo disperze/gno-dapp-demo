@@ -60,13 +60,13 @@ export const ReplyPost = () => {
       // TODO: clear body special chars
       const msg = createReplyMsg(address, bid, threadId, postId, body);
       const account = await client.getAccount(address);
-      const signDoc = createSignDoc(account.BaseAccount, msg, config, 2000000);
+      const signDoc = createSignDoc(account, msg, config, 2000000);
       const signature = await signer.signAmino(address, signDoc);
 
       const stdTx = makeProtoTx(signature.signed, signature.signature);
       const response = await client.broadcastTx(stdTx);
       await refreshBalance();
-      const replyUrl = await getReplyUrl(client, bid, threadId, response.result.Data);
+      const replyUrl = await getReplyUrl(client, bid, threadId, response.data);
       toast({
         title: `Transaction Successful`,
         description: (<Link href={replyUrl} >View reply </Link>),
