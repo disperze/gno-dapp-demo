@@ -115,7 +115,8 @@ export function createSignDoc(account: BaseAccount, msg: any, config: Partial<Ap
       signatures: [
         Signature.fromPartial({
           pubKey: Any.fromPartial({
-            typeUrl: signature.pub_key.type,
+            // TODO: Fix pub key type from Browser Wallet and Ledger
+            typeUrl: "/tm.PubKeySecp256k1", // signature.pub_key.type, 
             value: PubKeySecp256k1.encode({
               key: signature.pub_key.value,
             }).finish(),
