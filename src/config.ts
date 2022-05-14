@@ -7,14 +7,11 @@ const local: AppConfig = {
   rpcUrl: "http://localhost:26657",
   httpUrl: "http://localhost:1317",
   token: {
-    coinDenom: "STAKE",
+    coinDenom: "GNOT",
     coinDecimals: 6,
-    coinMinimalDenom: "ustake"
+    coinMinimalDenom: "gnot"
   },
-  gasPrice: 0.025,
-  codeId: 4,
-  contract: "",
-  marketContract: ""
+  gasPrice: 0.00001,
 };
 
 export const testnet: AppConfig = {
@@ -28,10 +25,7 @@ export const testnet: AppConfig = {
     coinDecimals: 6,
     coinMinimalDenom: "gnot"
   },
-  gasPrice: 0.00,
-  codeId: 1,
-  contract: "",
-  marketContract: ""
+  gasPrice: 0.00
 };
 
 export interface Token {
