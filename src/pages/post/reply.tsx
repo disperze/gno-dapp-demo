@@ -33,7 +33,7 @@ export const ReplyPost = () => {
     return parseInt(searchParams.get(key) ?? '0');
   }
 
-  const getReplyUrl = async (cli: LcdClient, bid: number, threadid: number, data: string) => {
+  const getReplyUrl = async (cli: LcdClient, bid: number, threadId: number, data: string) => {
     const boards = await cli.render("gno.land/r/boards");
     const boardList = parseBoards(boards);
     if (boardList.length > 0) {

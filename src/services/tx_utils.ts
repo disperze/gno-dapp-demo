@@ -23,6 +23,16 @@ export function createSignDoc(account: BaseAccount, msg: any, config: Partial<Ap
     };
   }
   
+  export function createTransferMsg(sender: string, recipient: string, amount: string) {
+    return {
+      type: "/bank.MsgSend",
+      value: {
+        from_address: sender,
+        to_address: recipient,
+        amount: amount,
+      }
+    };
+  }
   export function createReplyMsg(sender: string, bid: number, threadid: number, postid: number, body: string) {
     return  {
       type: "/vm.m_call",

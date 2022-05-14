@@ -11,73 +11,62 @@ import {
     NumberInput,
     NumberInputField,
     useBoolean,
+    useToast,
 } from '@chakra-ui/react';
 import { useState } from 'react';
-import { StdSignDoc } from "@cosmjs/amino";
-import { useSdk } from '../../services';
-import { BaseAccount, makeProtoTx } from '../../services';
+import { createSignDoc, createTransferMsg, ellideMiddle, useSdk } from '../../services';
+import { makeProtoTx } from '../../services';
 
 export const Transfer = () => {
-    const { address, client, getSigner, config, refreshBalance } = useSdk();
+  const toast = useToast();
+  const { address, client, getSigner, config, refreshBalance } = useSdk();
 
-    const [loading, setLoading] = useBoolean();
-    const [recipient, setRecipient] = useState<string>();
-    const [amount, setAmount] = useState<number>(0);
+  const [loading, setLoading] = useBoolean();
+  const [recipient, setRecipient] = useState<string>();
+  const [amount, setAmount] = useState<number>(0);
 
-    const createSignDoc = (account: BaseAccount, recipient: string, amount: number, gas: number): StdSignDoc => {
-      return {
-        msgs: [
-          {
-            type: "/bank.MsgSend",
-            value: {
-              from_address: account.address,
-              to_address: recipient,
-              amount: `${amount}${config.token.coinMinimalDenom}`,
-            }
-          }
-        ],
-        fee: { amount: [{
-          amount: "1",
-          denom: config.token.coinMinimalDenom
-        }], gas: gas.toString() },
-        chain_id: config.chainId!,
-        memo: "",
-        account_number: account.account_number,
-        sequence: account.sequence,
-      };
+  const submit = async () => {
+    if (!address || !recipient || !amount) {
+      return;
+    }
+    const signer = getSigner();
+    if (!client || !signer) {
+      return;
+    }
 
-    };
+    setLoading.on();
 
-    const submit = async () => {
-      if (!address || !recipient || !amount) {
-        return;
-      }
-      const signer = getSigner();
-      if (!client || !signer) {
-        return;
-      }
+    try {
+      const account = await client.getAccount(address);
+      const toSend = `${amount * 10**6}${config.token.coinMinimalDenom}`;
+      const msg = createTransferMsg(account.address, recipient, toSend);
+      const signDoc = createSignDoc(account, msg, config, 60000);
+      const signature = await signer.signAmino(address, signDoc);
 
-      setLoading.on();
-
-      try {
-        const account = await client.getAccount(address);
-        const signDoc = createSignDoc(account, recipient, amount * 10**6, 60000);
-        console.log(signDoc);
-        const signature = await signer.signAmino(address, signDoc);
-        console.log(signature);
-  
-        const txBz = makeProtoTx(signature.signed, signature.signature);
-        const response = await client.broadcastTx(txBz);
-        await refreshBalance();
-        alert("Tx: " + response.txhash);
-        console.log(response);
-      } catch (error) {
-        alert("Error");
-        console.log(error);
-      } finally {
-        setLoading.off();
-      }
-    };
+      const txBz = makeProtoTx(signature.signed, signature.signature);
+      const response = await client.broadcastTx(txBz);
+      await refreshBalance();
+      console.log(response);
+      toast({
+        title: `Transaction Successful`,
+        description: `${ellideMiddle(response.txhash, 28)}`,
+        status: "success",
+        position: "bottom-right",
+        isClosable: true,
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: `${error}`,
+        status: "error",
+        position: "bottom-right",
+        isClosable: true,
+      });
+      console.log(error);
+    } finally {
+      setLoading.off();
+    }
+  };
 
   return (
     <Flex
