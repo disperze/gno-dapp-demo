@@ -53,7 +53,6 @@ interface ReplyArgs {
 function Cards(props: any){
   return (
     <Flex
-      // bg={useColorModeValue("#F9FAFB", "gray.600")}
       py={3} px={4}
       w="full"
     >
@@ -149,7 +148,7 @@ export const Board = () => {
           const account = await client.getAccount(address);
           const signDoc = createSignDoc(account, msg, config, 2000000);
           const signature = await signer.signAmino(address, signDoc);
-          // const stdTx = makeGnoStdTx(signature.signed, signature.signature);
+
           const txBytes = makeProtoTx(signature.signed, signature.signature);
           const response = await client.broadcastTx(txBytes);
           // const txHash: Uint8Array = await (window as any).keplr.sendTx("testchain", txBytes, "block");
