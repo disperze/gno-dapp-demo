@@ -38,7 +38,7 @@ export const Transfer = () => {
 
     try {
       const account = await client.getAccount(address);
-      const toSend = `${amount * 10**6}${config.token.coinMinimalDenom}`;
+      const toSend = `${Math.ceil(amount * 10**6)}${config.token.coinMinimalDenom}`;
       const msg = createTransferMsg(account.address, recipient, toSend);
       const signDoc = createSignDoc(account, msg, config, 60000);
       const signature = await signer.signAmino(address, signDoc);
