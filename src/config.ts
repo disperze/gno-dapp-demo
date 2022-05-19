@@ -25,7 +25,7 @@ export const testnet: AppConfig = {
     coinDecimals: 6,
     coinMinimalDenom: "gnot"
   },
-  gasPrice: 0.00
+  gasPrice: 0.00000000000001
 };
 
 export interface Token {
