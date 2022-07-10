@@ -56,7 +56,7 @@ export function Navbar(): JSX.Element {
         <Flex flex={{ base: 1 }}>
           <Link
             as={ReactRouterLink}
-            to="/r/boards:gnolang"
+            to="/r/boards:testboard"
             _hover={{
               textDecoration: 'none',
             }}>

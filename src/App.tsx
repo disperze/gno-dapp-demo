@@ -30,7 +30,7 @@ export const App = () => (
             <Route path="/" element={<Home />} />
             <Route path="transfer" element={<Transfer />} />
             <Route path="create-post" element={<NewPost />} />
-            <Route path="reply-post" element={<Navigate to="/r/boards:gnolang/8" replace />} />
+            <Route path="reply-post" element={<Navigate to="/r/boards:testboard/8" replace />} />
             <Route path="r/*" element={<Board />} />
           </Routes>
         </Router>
