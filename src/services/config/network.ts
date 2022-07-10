@@ -9,13 +9,12 @@ export interface AppConfig {
 }
 
 export interface NetworkConfigs {
-  readonly testnet: AppConfig;
   readonly [key: string]: AppConfig;
 }
 
 export function getAppConfig(configs: NetworkConfigs): AppConfig {
   const network = process.env.REACT_APP_NETWORK;
-  if (!network) return configs.testnet;
+  if (!network) return configs.test2;
 
   const config = configs[network];
   if (!config) {

@@ -28,6 +28,20 @@ export const testnet: AppConfig = {
   gasPrice: 0.00000000000001
 };
 
+export const test2: AppConfig = {
+  chainId: "test2",
+  chainName: "Gno Test2",
+  addressPrefix: "g",
+  rpcUrl: "http://173.255.228.38:36657",
+  httpUrl: "https://lcd.gno.tools",
+  token: {
+    coinDenom: "GNOT",
+    coinDecimals: 6,
+    coinMinimalDenom: "ugnot"
+  },
+  gasPrice: 0.00000000000001
+};
+
 export interface Token {
   readonly denom: string;
   readonly name: string;
@@ -37,11 +51,11 @@ export interface Token {
 
 export const coins: Token[] = [
   {
-    denom: "gnot",
+    denom: "ugnot",
     name: "GNOT",
     decimals: 6,
   },
 ];
 
-const configs: NetworkConfigs = { local, testnet };
+const configs: NetworkConfigs = { local, testnet, test2 };
 export const config = getAppConfig(configs);
