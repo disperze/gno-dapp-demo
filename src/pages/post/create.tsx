@@ -48,7 +48,7 @@ export const NewPost = () => {
       const boardList = parseBoards(boards);
       if (boardList.length > 0) {
         const newPostId = parseResultId(data);
-        return `https://gno.land${boardList[bid-1]}/${newPostId}`;
+        return `https://test2.gno.land${boardList[bid-1]}/${newPostId}`;
       }
       return undefined;
     };
