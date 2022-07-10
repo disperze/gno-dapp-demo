@@ -20,7 +20,7 @@ export function getTokenConfig(denom: string): Token|undefined {
 
 export function formatPrice(price: {amount: string, denom: string}): string {
   const coin = getTokenConfig(price.denom)!;
-  const amount = parseInt(price.amount) / Math.pow(10, coin.decimals);
+  const amount = (parseInt(price.amount) / Math.pow(10, coin.decimals)).toFixed(6);
 
   return amount + " " + coin.name;
 }
