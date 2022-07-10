@@ -88,7 +88,7 @@ export const Board = () => {
     const [loaded, setLoaded] = useState<boolean>();
 
     const replaceUrls = (text: string) => {
-        return text.replaceAll("/r/boards?help&__func=CreatePost", "/create-post?");
+        return text.replaceAll("/r/boards?help&__func=CreateThread", "/create-post?");
     };
 
     useEffect(() => {
@@ -150,6 +150,7 @@ export const Board = () => {
           const signature = await signer.signAmino(address, signDoc);
 
           const txBytes = makeProtoTx(signature.signed, signature.signature);
+          // console.log(Buffer.from(txBytes).toString('base64'));
           const response = await client.broadcastTx(txBytes);
           // const txHash: Uint8Array = await (window as any).keplr.sendTx("testchain", txBytes, "block");
           console.log(response);

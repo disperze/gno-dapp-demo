@@ -58,7 +58,7 @@ export function createSignDoc(account: BaseAccount, msg: any, config: Partial<Ap
         caller: sender,
         send: "",
         pkg_path: "gno.land/r/boards",
-        func: "CreatePost",
+        func: "CreateThread",
         args: [
           bid.toString(),
           title,
