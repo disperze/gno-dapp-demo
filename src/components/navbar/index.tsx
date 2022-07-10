@@ -66,7 +66,7 @@ export function Navbar(): JSX.Element {
               fontSize='2xl'
               fontWeight='extrabold'
             >
-              GnoLand
+              GnoLand Test2
             </Text>
           </Link>
         </Flex>
