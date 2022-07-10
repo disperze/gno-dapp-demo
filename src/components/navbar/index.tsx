@@ -106,7 +106,7 @@ const DesktopNav = () => {
         </MenuButton>
         <MenuList>
         <MenuItem>
-            <Link w="full" href="https://gno.land/faucet" isExternal>Faucet <ExternalLinkIcon mx='2px' /></Link>
+            <Link w="full" href="https://test2.gno.land/faucet" isExternal>Faucet <ExternalLinkIcon mx='2px' /></Link>
           </MenuItem>
           <MenuItem>
             <Link as={ReactRouterLink} w="full" to='/transfer'>Transfer</Link>

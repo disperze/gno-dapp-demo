@@ -10,7 +10,7 @@ export const Home = () => (
     <Link
       color="teal.500"
       as={ReactRouterLink}
-      to="/r/boards:gnolang"
+      to="/r/boards:testboard"
       fontSize="2xl"
     >
       Go to gnolang board.
