@@ -68,6 +68,23 @@ export function createSignDoc(account: BaseAccount, msg: any, config: Partial<Ap
     };
   }
   
+  export function createUserMsg(sender: string, inviter: string, username: string, profile: string) {
+    return  {
+      type: "/vm.m_call",
+      value: {
+        caller: sender,
+        send: !inviter ? "200000000ugnot" : "",
+        pkg_path: "gno.land/r/users",
+        func: "Register",
+        args: [
+          inviter,
+          username,
+          profile
+        ]
+      }
+    };
+  }
+  
   export function createDeleteMsg(sender: string, bid: number, threadid: number, postid: number, reason: string) {
     return  {
       type: "/vm.m_call",
