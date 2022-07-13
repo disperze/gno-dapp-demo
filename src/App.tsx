@@ -19,6 +19,7 @@ import { Navbar } from "./components/navbar"
 import { NewPost } from "./pages/post"
 import { Board } from "./pages/board"
 import { NewUser } from "./pages/user/create"
+import { NewVerifyBalance } from "./pages/user/verify"
 
 export const App = () => (
   <ChakraProvider theme={theme}>
@@ -32,6 +33,7 @@ export const App = () => (
             <Route path="transfer" element={<Transfer />} />
             <Route path="create-post" element={<NewPost />} />
             <Route path="create-user" element={<NewUser />} />
+            <Route path="verify-balance" element={<NewVerifyBalance />} />
             <Route path="reply-post" element={<Navigate to="/r/boards:testboard/8" replace />} />
             <Route path="r/*" element={<Board />} />
           </Routes>
