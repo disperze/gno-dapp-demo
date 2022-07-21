@@ -79,7 +79,7 @@ export const NewVerifyBalance = () => {
             <FormControl id="address" isRequired>
               <FormLabel>Address</FormLabel>
               <Input
-                placeholder="cosmos14vhcds..lmfkx0, juno14vhcds...m0ff2dn"
+                placeholder="cosmos14vhcds..lmfkx0 g14vhcds..luioa juno14vhcds...m0ff2dn"
                 onChange={(e) => setAddress(e.target.value)} />
             </FormControl>
             <Stack spacing={10} pt={2}>
