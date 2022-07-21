@@ -9,10 +9,11 @@ import {
     useColorModeValue,
     useBoolean,
     Input,
+    Text,
     useToast,
 } from '@chakra-ui/react';
 import { useState } from 'react';
-import { useSdk } from '../../services';
+import { formatPrice, useSdk } from '../../services';
 import { fromBech32, toBech32 } from '@cosmjs/encoding';
 
 export const NewVerifyBalance = () => {
@@ -21,6 +22,8 @@ export const NewVerifyBalance = () => {
   
     const [loading, setLoading] = useBoolean();
     const [address, setAddress] = useState<string>();
+    const [result, setResult] = useState<string>();
+    const [gnoAddress, setGnoAddress] = useState<string>();
 
     const submit = async () => {
       if (!address || !client) {
@@ -34,9 +37,11 @@ export const NewVerifyBalance = () => {
         const gnoAddress = toBech32("g", data);
         const res = await client.getBalance(gnoAddress);
         if (res.balances.length === 0) {
-          alert("No exists");
+          setGnoAddress("");
+          setResult("Address not found");
         } else {
-          console.log("Balance", res.balances[0])
+          setGnoAddress(gnoAddress);
+          setResult(formatPrice(res.balances[0]));
         }
       } catch (error) {
         console.log(error);
@@ -67,7 +72,7 @@ export const NewVerifyBalance = () => {
           rounded={'lg'}
           bg={useColorModeValue('white', 'gray.700')}
           boxShadow={'lg'}
-          w={"420px"}
+          w={"520px"}
           px={10}
           py={16}>
           <Stack spacing={4}>
@@ -92,6 +97,17 @@ export const NewVerifyBalance = () => {
               </Button>
             </Stack>
           </Stack>
+        </Box>
+        <Box
+          hidden={loading || !result}
+          p={4}
+          textAlign="center"
+          bgColor={"blue.400"}
+          w={"520px"}>
+          <Text color={'white'}>
+            {gnoAddress && <span>{gnoAddress} <br /></span>}
+            {result}
+          </Text>
         </Box>
       </Stack>
     </Flex>
