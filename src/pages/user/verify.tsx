@@ -65,7 +65,7 @@ export const NewVerifyBalance = () => {
       <Stack spacing={8} mx={'auto'} maxW={'lg'}>
         <Stack align={'center'}>
           <Heading fontSize={'4xl'} textAlign={'center'}>
-            GNO Balance
+            GNO Test2 Balance
           </Heading>
         </Stack>
         <Box
