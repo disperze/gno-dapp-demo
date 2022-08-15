@@ -14,7 +14,8 @@ import {
     useToast,
 } from '@chakra-ui/react';
 import { useState } from 'react';
-import { createSignDoc, createTransferMsg, ellideMiddle, useSdk } from '../../services';
+import { TransactionLink } from '../../components/transaction-link';
+import { createSignDoc, createTransferMsg, useSdk } from '../../services';
 import { makeProtoTx } from '../../services';
 
 export const Transfer = () => {
@@ -49,7 +50,7 @@ export const Transfer = () => {
       console.log(response);
       toast({
         title: `Transaction Successful`,
-        description: `${ellideMiddle(response.txhash, 28)}`,
+        description: <TransactionLink tx={response.txhash} />,
         status: "success",
         position: "bottom-right",
         isClosable: true,
