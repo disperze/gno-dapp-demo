@@ -32,7 +32,7 @@ export const test2: AppConfig = {
   chainId: "test2",
   chainName: "Gno Test2",
   addressPrefix: "g",
-  rpcUrl: "http://173.255.228.38:36657",
+  rpcUrl: "https://rpc.test2.gno.land",
   httpUrl: "https://lcd.gno.tools",
   token: {
     coinDenom: "GNOT",
