@@ -1,4 +1,5 @@
 import { AxiosInstance } from "axios";
+import { getErrorMsg } from "./tx_utils";
 import { BalanceResponse, BaseAccount, TxResponse } from "./types";
 
 export class LcdClient {
@@ -37,11 +38,8 @@ export class LcdClient {
 
         const txResponse: TxResponse = res.data["tx_response"];
         if (txResponse.code) {
-            let log = txResponse.raw_log;
-            if (log) {
-                log = log.split("\n")[0];
-            }
-            throw new Error(log);
+
+            throw new Error(getErrorMsg(txResponse.raw_log));
         }
 
         return txResponse;

@@ -32,7 +32,6 @@ import {
   createDeleteMsg,
   createReplyMsg,
   createSignDoc,
-  ellideMiddle,
   makeProtoTx,
   useSdk
 } from '../../services';
