@@ -1,5 +1,7 @@
 import * as React from "react";
 import { OfflineAminoSigner } from "@cosmjs/amino";
+import { WebsocketClient } from "@cosmjs/tendermint-rpc";
+import { SubscriptionEvent } from "@cosmjs/tendermint-rpc/build/rpcclients";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { AppConfig } from "../config/network";
 import { createClient } from "./sdk";
@@ -106,4 +108,38 @@ export function SdkProvider({ config: configProp, children }: SdkProviderProps):
   }, [signer, clear, client, config, refreshBalance]);
 
   return <GnoContext.Provider value={value}>{children}</GnoContext.Provider>;
+}
+
+export function waitingTx(rpc: string, query: string): Promise<SubscriptionEvent> {
+  if (rpc.startsWith("http")) {
+    rpc = rpc.replace("http", "ws");
+  }
+  const client = new WebsocketClient(rpc)
+  const rndId = Math.floor(Math.random() * 10000);
+
+  const stream = client.listen({
+    jsonrpc: "2.0",
+    id: `gno-tools-${rndId}`,
+    method: "subscribe",
+    params: {
+      query,
+    },
+  });
+
+  return new Promise((resolve, reject) => {
+    const sub = stream.subscribe({
+      next: (tx) => {
+        sub.unsubscribe();
+        const txResult = tx.data.value.TxResult;
+        if (txResult && txResult.result.code) {
+          reject(txResult.result.log);
+          return;
+        }
+        resolve(tx);
+      },
+      error: (err) => {
+        reject(err);
+      }
+    });
+  });
 }
