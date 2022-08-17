@@ -42,6 +42,7 @@ import remarkGfm from 'remark-gfm';
 import emoji from 'remark-emoji';
 import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 import { darcula } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { TransactionLink } from '../../components/transaction-link';
 
 interface ReplyArgs {
     isReply: boolean,
@@ -156,7 +157,7 @@ export const Board = () => {
           console.log(response);
           toast({
             title: `Transaction Successful`,
-            description: `${ellideMiddle(response.txhash, 28)}`,
+            description: <TransactionLink tx={response.txhash} />,
             status: "success",
             position: "bottom-right",
             isClosable: true,
