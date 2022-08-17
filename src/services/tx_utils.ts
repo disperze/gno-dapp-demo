@@ -182,4 +182,50 @@ export function createSignDoc(account: BaseAccount, msg: any, config: Partial<Ap
       ],
       memo: content.memo,
     };
+}
+
+export function getErrorMsg(log?: string) {
+  if (!log) {
+    return "";
   }
+
+  const validKeys = ["Data", "Msg Traces", "Stack Trace"];
+  const getKey = (line: string) => {
+    for (let j = 0; j < validKeys.length; j++) {
+      if (line.startsWith(validKeys[j])) {
+        return validKeys[j];
+      }
+    }
+    return "";
+  };
+
+  const lines = log.split("\n");
+  const objResult = {} as any;
+  let lastkey = '';
+  for (let i = 0; i < lines.length; i++) {
+    let line = lines[i];
+    const key = getKey(line);
+    if (key) {
+      lastkey = key;
+      objResult[key] = [];
+      line = line.replace(key+":", "");
+    }
+
+    line = line.trim();
+    if (line && lastkey) {
+      objResult[lastkey].push(line);
+    }
+  }
+  console.log(objResult);
+  const dataErr = objResult["Data"][0];
+  if (dataErr && dataErr.startsWith("errors.FmtError")) {
+    return dataErr.substring(dataErr.lastIndexOf("\\t") + 2).replace('"}}', "").trim();
+  }
+
+  const traceError = objResult["Msg Traces"][0];
+  if (traceError) {
+    return traceError.substring(traceError.indexOf("-") + 1).trim();
+  }
+
+  return log;
+}
