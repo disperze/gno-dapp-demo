@@ -16,7 +16,7 @@ import {
 import { useState } from 'react';
 import { TransactionLink } from '../../components/transaction-link';
 import { createSignDoc, createTransferMsg, useSdk } from '../../services';
-import { makeProtoTx } from '../../services';
+import { makeProtoTx, waitingTx } from '../../services';
 
 export const Transfer = () => {
   const toast = useToast();
@@ -46,14 +46,18 @@ export const Transfer = () => {
 
       const txBz = makeProtoTx(signature.signed, signature.signature);
       const response = await client.broadcastTx(txBz);
-      await refreshBalance();
-      console.log(response);
-      toast({
-        title: `Transaction Successful`,
-        description: <TransactionLink tx={response.txhash} />,
-        status: "success",
-        position: "bottom-right",
-        isClosable: true,
+      const query =`tx.hash='${response.txhash}'`;
+      waitingTx("wss://rpc.gno.tools", query)
+      .then(async (tx) => {
+        await refreshBalance();
+        toast({
+          title: `Transaction Successful`,
+          description: <TransactionLink tx={response.txhash} />,
+          status: "success",
+          position: "bottom-right",
+          isClosable: true,
+        });
+        setLoading.off();
       });
     } catch (error) {
       toast({
@@ -64,7 +68,6 @@ export const Transfer = () => {
         isClosable: true,
       });
       console.log(error);
-    } finally {
       setLoading.off();
     }
   };
