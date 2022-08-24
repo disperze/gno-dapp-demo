@@ -15,13 +15,13 @@ export async function loadKeplrWallet(chainId: string): Promise<OfflineAminoSign
     throw new Error("Keplr extension is not available");
   }
 
-  anyWindow.keplr.defaultOptions = {
-    sign: {
-      preferNoSetFee: true,
-      preferNoSetMemo: false,
-      // disableBalanceCheck: true,
-    }
-  };
+  // anyWindow.keplr.defaultOptions = {
+  //   sign: {
+  //     preferNoSetFee: true,
+  //     preferNoSetMemo: false,
+  //     // disableBalanceCheck: true,
+  //   }
+  // };
 
   return await anyWindow.getOfflineSignerOnlyAmino(chainId);
 }
