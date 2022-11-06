@@ -39,7 +39,7 @@ export function createSignDoc(account: BaseAccount, msg: any, config: Partial<Ap
       value: {
         caller: sender,
         send: "",
-        pkg_path: "gno.land/r/boards",
+        pkg_path: "gno.land/r/demo/boards",
         func: "CreateReply",
         args: [
           bid.toString(),
@@ -57,7 +57,7 @@ export function createSignDoc(account: BaseAccount, msg: any, config: Partial<Ap
       value: {
         caller: sender,
         send: "",
-        pkg_path: "gno.land/r/boards",
+        pkg_path: "gno.land/r/demo/boards",
         func: "CreateThread",
         args: [
           bid.toString(),
@@ -74,7 +74,7 @@ export function createSignDoc(account: BaseAccount, msg: any, config: Partial<Ap
       value: {
         caller: sender,
         send: !inviter ? "200000000ugnot" : "",
-        pkg_path: "gno.land/r/users",
+        pkg_path: "gno.land/r/demo/users",
         func: "Register",
         args: [
           inviter,
@@ -91,7 +91,7 @@ export function createSignDoc(account: BaseAccount, msg: any, config: Partial<Ap
       value: {
         caller: sender,
         send: "",
-        pkg_path: "gno.land/r/boards",
+        pkg_path: "gno.land/r/demo/boards",
         func: "DeletePost",
         args: [
           bid.toString(),

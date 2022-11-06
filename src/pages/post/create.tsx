@@ -44,11 +44,11 @@ export const NewPost = () => {
     }
   
     const getPostUrl = async (cli: LcdClient, bid: number, data: string) => {
-      const boards = await cli.render("gno.land/r/boards");
+      const boards = await cli.render("gno.land/r/demo/boards");
       const boardList = parseBoards(boards);
       if (boardList.length > 0) {
         const newPostId = parseResultId(data);
-        return `https://test2.gno.land${boardList[bid-1]}/${newPostId}`;
+        return `https://test3.gno.land${boardList[bid-1]}/${newPostId}`;
       }
       return undefined;
     };

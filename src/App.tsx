@@ -34,7 +34,7 @@ export const App = () => (
             <Route path="create-post" element={<NewPost />} />
             <Route path="create-user" element={<NewUser />} />
             <Route path="verify-balance" element={<NewVerifyBalance />} />
-            <Route path="reply-post" element={<Navigate to="/r/boards:testboard/8" replace />} />
+            <Route path="reply-post" element={<Navigate to="/r/demo/boards:testboard/4" replace />} />
             <Route path="r/*" element={<Board />} />
           </Routes>
         </Router>

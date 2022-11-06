@@ -52,7 +52,7 @@ export const NewUser = () => {
         const stdTx = makeProtoTx(signature.signed, signature.signature);
         const response = await client.broadcastTx(stdTx);
         await refreshBalance();
-        const userUrl = `/r/users:${username}`;
+        const userUrl = `/r/demo/users:${username}`;
         toast({
           title: `Transaction Successful`,
           description: (<Link href={userUrl}>View user <ExternalLinkIcon mx='2px' /></Link>),

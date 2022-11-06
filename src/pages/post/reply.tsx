@@ -34,7 +34,7 @@ export const ReplyPost = () => {
   }
 
   const getReplyUrl = async (cli: LcdClient, bid: number, threadId: number, data: string) => {
-    const boards = await cli.render("gno.land/r/boards");
+    const boards = await cli.render("gno.land/r/demo/boards");
     const boardList = parseBoards(boards);
     if (boardList.length > 0) {
       const newPostId = parseResultId(data);
