@@ -28,9 +28,9 @@ export const testnet: AppConfig = {
   gasPrice: 0.00000000000001
 };
 
-export const test2: AppConfig = {
-  chainId: "test2",
-  chainName: "Gno Test2",
+export const test3: AppConfig = {
+  chainId: "test3",
+  chainName: "Gno Test3",
   addressPrefix: "g",
   rpcUrl: "https://rpc.gno.tools",
   httpUrl: "https://lcd.gno.tools",
@@ -57,5 +57,5 @@ export const coins: Token[] = [
   },
 ];
 
-const configs: NetworkConfigs = { local, testnet, test2 };
+const configs: NetworkConfigs = { local, testnet, test3 };
 export const config = getAppConfig(configs);
