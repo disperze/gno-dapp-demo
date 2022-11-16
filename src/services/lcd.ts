@@ -44,4 +44,13 @@ export class LcdClient {
 
         return txResponse;
     }
+
+    async faucet(address: string): Promise<string> {
+        const res = await this.instance.post("/faucet", `toaddr=${address}`, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        });
+        return res.data;
+    }
 }
