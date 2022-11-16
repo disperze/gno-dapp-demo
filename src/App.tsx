@@ -20,6 +20,7 @@ import { NewPost } from "./pages/post"
 import { Board } from "./pages/board"
 import { NewUser } from "./pages/user/create"
 import { NewVerifyBalance } from "./pages/user/verify"
+import { Faucet } from "./pages/user/faucet"
 
 export const App = () => (
   <ChakraProvider theme={theme}>
@@ -34,6 +35,7 @@ export const App = () => (
             <Route path="create-post" element={<NewPost />} />
             <Route path="create-user" element={<NewUser />} />
             <Route path="verify-balance" element={<NewVerifyBalance />} />
+            <Route path="faucet" element={<Faucet />} />
             <Route path="reply-post" element={<Navigate to="/r/demo/boards:testboard/4" replace />} />
             <Route path="r/*" element={<Board />} />
           </Routes>
