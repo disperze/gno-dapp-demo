@@ -1,4 +1,5 @@
 import { coins, Token } from "../config";
+import { fromBech32, toBech32 } from '@cosmjs/encoding';
 
 export function formatAddress(wallet: string): string {
   return ellideMiddle(wallet, 24);
@@ -59,4 +60,12 @@ export function parseBoards(raw: string): string[] {
   }
 
   return matches.map((str) => str.substring(1, str.length - 1));
+}
+
+export function normalizeBech32(prefix: string, address: string): string {
+  const result = fromBech32(address);
+  if (result.prefix !== prefix) {
+    throw new Error("Invalid bech32 prefix");
+  }
+  return toBech32(prefix, result.data);
 }
