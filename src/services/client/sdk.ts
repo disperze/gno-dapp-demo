@@ -1,11 +1,15 @@
 import axios from "axios";
-import { OfflineAminoSigner, makeCosmoshubPath } from "@cosmjs/amino";
+import {
+  OfflineAminoSigner,
+  makeCosmoshubPath,
+} from "@cosmjs/amino";
 
 import { AppConfig } from "../config/network";
 import { LcdClient } from "../lcd";
 import { LedgerSigner, Secp256k1HdWallet } from "../signer";
 import TransportWebUSB from "@ledgerhq/hw-transport-webusb";
-
+import { delay } from "./../utils";
+import { AdenaSigner } from "../signer/adena";
 
 export type WalletLoader = (chainId: string, addressPrefix?: string) => Promise<OfflineAminoSigner>;
 
@@ -24,6 +28,26 @@ export async function loadKeplrWallet(chainId: string): Promise<OfflineAminoSign
   // };
 
   return await anyWindow.getOfflineSignerOnlyAmino(chainId);
+}
+
+export async function loadAdenaWallet(chainId: string): Promise<OfflineAminoSigner> {
+  const anyWindow = window as any;
+  if (!anyWindow.adena) {
+    throw new Error("Adena extension is not available");
+  }
+  
+  let result = await anyWindow.adena.GetAccount();
+  // if type: "NOT_CONNECTED"
+  if (result.code === 1000) {
+    const res = await anyWindow.adena.AddEstablish(chainId);
+    if (res.code !== 0) {
+      throw new Error(res.message);
+    }
+    await delay(500);
+    result = await anyWindow.adena.GetAccount();
+  }
+
+  return new AdenaSigner(result.data);
 }
 
 export async function loadLedgerWallet( _chainId: string, addressPrefix?: string): Promise<OfflineAminoSigner> {
