@@ -69,3 +69,7 @@ export function normalizeBech32(prefix: string, address: string): string {
   }
   return toBech32(prefix, result.data);
 }
+
+export function delay(delayInms: number) {
+  return new Promise(resolve => setTimeout(resolve, delayInms));
+}
