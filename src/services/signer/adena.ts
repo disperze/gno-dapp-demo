@@ -4,7 +4,7 @@ import {
   StdSignDoc,
   AminoSignResponse
 } from "@cosmjs/amino";
-import { fromBase64 } from "@cosmjs/encoding";
+import { fromBase64, toHex } from "@cosmjs/encoding";
 
 interface RequestDocontractMessage {
   message: {
@@ -15,6 +15,12 @@ interface RequestDocontractMessage {
   gasWanted: number;
   memo?: string;
 }
+
+export interface AdenaSignResponse extends AminoSignResponse {
+    readonly txHash: string;
+    readonly height: number;
+}
+
 
 export class AdenaSigner implements OfflineAminoSigner {
   constructor(private accountData: any) {
@@ -27,7 +33,7 @@ export class AdenaSigner implements OfflineAminoSigner {
           pubkey: fromBase64(this.accountData.publicKey.value),
       }]);
   }
-  async signAmino(signerAddress: string, signDoc: StdSignDoc): Promise<AminoSignResponse> {
+  async signAmino(signerAddress: string, signDoc: StdSignDoc): Promise<AdenaSignResponse> {
       const accounts = await this.getAccounts();
       const accountIndex = accounts.findIndex((account) => account.address === signerAddress);
 
@@ -59,6 +65,8 @@ export class AdenaSigner implements OfflineAminoSigner {
                   value: "",
               }
           },
+          txHash: toHex(fromBase64(res.data.hash)).toUpperCase(),
+          height: parseInt(res.data.height),
       };
   }
 }
