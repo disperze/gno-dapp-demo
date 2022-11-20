@@ -16,12 +16,12 @@ import {
 } from '@chakra-ui/react';
 import { useSearchParams } from 'react-router-dom';
 import { useState } from 'react';
-import { createReplyMsg, createSignDoc, LcdClient, parseBoards, parseResultId, useSdk, makeProtoTx } from '../../services';
+import { createReplyMsg, LcdClient, parseBoards, parseResultId, useSdk } from '../../services';
 
 export const ReplyPost = () => {
   const toast = useToast();
   const [searchParams ] = useSearchParams();
-  const { address, client, getSigner, config, refreshBalance } = useSdk();
+  const { address, client, getSignerClient, refreshBalance } = useSdk();
 
   const [loading, setLoading] = useBoolean();
   const [bid, setBid] = useState<number>(getQueryInt("bid"));
@@ -49,8 +49,8 @@ export const ReplyPost = () => {
     if (!address || !bid || !threadId || !postId || !body) {
       return;
     }
-    const signer = getSigner();
-    if (!client || !signer) {
+    const gno = getSignerClient();
+    if (!client || !gno) {
       return;
     }
 
@@ -59,12 +59,7 @@ export const ReplyPost = () => {
     try {
       // TODO: clear body special chars
       const msg = createReplyMsg(address, bid, threadId, postId, body);
-      const account = await client.getAccount(address);
-      const signDoc = createSignDoc(account, msg, config, 2000000);
-      const signature = await signer.signAmino(address, signDoc);
-
-      const stdTx = makeProtoTx(signature.signed, signature.signature);
-      const response = await client.broadcastTx(stdTx);
+      const response = await gno.signAndBroadcast(address, [msg]);
       await refreshBalance();
       const replyUrl = await getReplyUrl(client, bid, threadId, response.data);
       toast({

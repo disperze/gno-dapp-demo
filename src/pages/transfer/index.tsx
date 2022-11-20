@@ -15,12 +15,12 @@ import {
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import { TransactionLink } from '../../components/transaction-link';
-import { createSignDoc, createTransferMsg, useSdk } from '../../services';
-import { makeProtoTx, waitingTx } from '../../services';
+import { createTransferMsg, useSdk } from '../../services';
+import { waitingTx } from '../../services';
 
 export const Transfer = () => {
   const toast = useToast();
-  const { address, client, getSigner, config, refreshBalance } = useSdk();
+  const { address, getSignerClient, config, refreshBalance } = useSdk();
 
   const [loading, setLoading] = useBoolean();
   const [recipient, setRecipient] = useState<string>();
@@ -30,22 +30,17 @@ export const Transfer = () => {
     if (!address || !recipient || !amount) {
       return;
     }
-    const signer = getSigner();
-    if (!client || !signer) {
+    const gno = getSignerClient();
+    if (!gno) {
       return;
     }
 
     setLoading.on();
 
     try {
-      const account = await client.getAccount(address);
       const toSend = `${Math.ceil(amount * 10**6)}${config.token.coinMinimalDenom}`;
-      const msg = createTransferMsg(account.address, recipient, toSend);
-      const signDoc = createSignDoc(account, msg, config, 60000);
-      const signature = await signer.signAmino(address, signDoc);
-
-      const txBz = makeProtoTx(signature.signed, signature.signature);
-      const response = await client.broadcastTx(txBz);
+      const msg = createTransferMsg(address, recipient, toSend);
+      const response = await gno.signAndBroadcast(address, [msg]);
       const query =`tx.hash='${response.txhash}'`;
       waitingTx("wss://rpc.gno.tools", query)
       .then(async (tx) => {

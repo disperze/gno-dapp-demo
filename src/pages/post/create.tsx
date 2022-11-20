@@ -19,9 +19,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useState } from 'react';
 import {
   createPostMsg,
-  createSignDoc,
   LcdClient,
-  makeProtoTx,
   parseBoards,
   parseResultId,
   useSdk
@@ -32,7 +30,7 @@ import { ExternalLinkIcon } from '@chakra-ui/icons';
 export const NewPost = () => {
     const toast = useToast();
     const [searchParams ] = useSearchParams();
-    const { address, client, getSigner, config, refreshBalance } = useSdk();
+    const { address, client, getSignerClient, refreshBalance } = useSdk();
   
     const [loading, setLoading] = useBoolean();
     const [bid, setBid] = useState<number>(getQueryInt("bid"));
@@ -57,8 +55,8 @@ export const NewPost = () => {
       if (!address || !bid || !title || !body) {
         return;
       }
-      const signer = getSigner();
-      if (!client || !signer) {
+      const gno = getSignerClient();
+      if (!client || !gno) {
         return;
       }
   
@@ -67,12 +65,7 @@ export const NewPost = () => {
       try {
         // TODO: clear body special characters
         const msg = createPostMsg(address, bid, title, body);
-        const account = await client.getAccount(address);
-        const signDoc = createSignDoc(account, msg, config, 2000000);
-        const signature = await signer.signAmino(address, signDoc);
-  
-        const stdTx = makeProtoTx(signature.signed, signature.signature);
-        const response = await client.broadcastTx(stdTx);
+        const response = await gno.signAndBroadcast(address, [msg]);
         await refreshBalance();
         const postUrl = await getPostUrl(client, bid, response.data);
         toast({

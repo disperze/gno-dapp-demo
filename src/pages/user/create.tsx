@@ -16,8 +16,6 @@ import {
 import { useState } from 'react';
 import {
   createUserMsg,
-  createSignDoc,
-  makeProtoTx,
   useSdk
 } from '../../services';
 
@@ -25,7 +23,7 @@ import { ExternalLinkIcon } from '@chakra-ui/icons';
   
 export const NewUser = () => {
     const toast = useToast();
-    const { address, client, getSigner, config, refreshBalance } = useSdk();
+    const { address, getSignerClient, refreshBalance } = useSdk();
   
     const [loading, setLoading] = useBoolean();
     const [username, setUsername] = useState<string>();
@@ -36,8 +34,8 @@ export const NewUser = () => {
       if (!address || !username) {
         return;
       }
-      const signer = getSigner();
-      if (!client || !signer) {
+      const gno = getSignerClient();
+      if (!gno) {
         return;
       }
   
@@ -45,12 +43,7 @@ export const NewUser = () => {
   
       try {
         const msg = createUserMsg(address, inviter ?? "", username,  profile ?? "");
-        const account = await client.getAccount(address);
-        const signDoc = createSignDoc(account, msg, config, 2000000);
-        const signature = await signer.signAmino(address, signDoc);
-  
-        const stdTx = makeProtoTx(signature.signed, signature.signature);
-        const response = await client.broadcastTx(stdTx);
+        const response = await gno.signAndBroadcast(address, [msg]);
         await refreshBalance();
         const userUrl = `/r/demo/users:${username}`;
         toast({
