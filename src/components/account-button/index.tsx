@@ -27,6 +27,7 @@ import {
 } from '@chakra-ui/react';
 import { MdAccountBalanceWallet } from "react-icons/md";
 import {
+  GnoClient,
   loadAdenaWallet,
   loadLedgerWallet,
   loadOrCreateWalletDirect,
@@ -52,7 +53,8 @@ export function AccountButton(): JSX.Element {
 
   async function init(loadWallet: WalletLoader) {
     const signer = await loadWallet(config.chainId, config.addressPrefix);
-    sdk.init(signer);
+    const clientSigner = new GnoClient(config, signer, sdk.client!);
+    sdk.init(clientSigner);
   }
 
   async function connectKeplr() {

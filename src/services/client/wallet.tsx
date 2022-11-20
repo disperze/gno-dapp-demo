@@ -1,5 +1,4 @@
 import * as React from "react";
-import { OfflineAminoSigner } from "@cosmjs/amino";
 import { WebsocketClient } from "@cosmjs/tendermint-rpc";
 import { SubscriptionEvent } from "@cosmjs/tendermint-rpc/build/rpcclients";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -7,10 +6,11 @@ import { AppConfig } from "../config/network";
 import { createClient } from "./sdk";
 import { LcdClient } from "../lcd";
 import { Coin } from "../types";
+import { GnoClient } from "./gno";
 
 interface GnoContextType {
   readonly initialized: boolean;
-  readonly init: (signer: OfflineAminoSigner) => void;
+  readonly init: (signer: GnoClient) => void;
   readonly clear: () => void;
   readonly config: Partial<AppConfig>;
   readonly client: LcdClient | undefined;
@@ -18,8 +18,7 @@ interface GnoContextType {
   readonly address: string;
   readonly balance: readonly Coin[];
   readonly refreshBalance: () => Promise<void>;
-  readonly getSigner: () => OfflineAminoSigner | undefined;
-  readonly changeSigner: (newSigner: OfflineAminoSigner) => void;
+  readonly getSignerClient: () => GnoClient | undefined;
 }
 
 function throwNotInitialized(): any {
@@ -36,8 +35,7 @@ const defaultContext: GnoContextType = {
   address: "",
   balance: [],
   refreshBalance: throwNotInitialized,
-  getSigner: () => undefined,
-  changeSigner: throwNotInitialized,
+  getSignerClient: () => undefined,
 };
 
 const GnoContext = React.createContext<GnoContextType>(defaultContext);
@@ -50,16 +48,16 @@ interface SdkProviderProps extends React.HTMLAttributes<HTMLOrSVGElement> {
 
 export function SdkProvider({ config: configProp, children }: SdkProviderProps): JSX.Element {
   const [config, setConfig] = useState(configProp);
-  const [signer, setSigner] = useState<OfflineAminoSigner>();
+  const [signerClient, setSignerClient] = useState<GnoClient>();
   const [client, setClient] = useState<LcdClient>();
 
-  const contextWithInit = useMemo(() => ({ ...defaultContext, init: setSigner }), []);
+  const contextWithInit = useMemo(() => ({ ...defaultContext, init: setSignerClient }), []);
   const [value, setValue] = useState<GnoContextType>(contextWithInit);
 
   const clear = useCallback(() => {
     setValue({ ...contextWithInit });
     setClient(undefined);
-    setSigner(undefined);
+    setSignerClient(undefined);
     setConfig(configProp);
   }, [contextWithInit, configProp]);
 
@@ -82,12 +80,12 @@ export function SdkProvider({ config: configProp, children }: SdkProviderProps):
   }, [contextWithInit, config]);
 
   useEffect(() => {
-    if (!signer || !client) return;
+    if (!signerClient || !client) return;
 
     const balance: Coin[] = [];
 
     (async function updateValue(): Promise<void> {
-      const address = (await signer.getAccounts())[0].address;
+      const address = (await signerClient.getSigner().getAccounts())[0].address;
 
       await refreshBalance(address, balance);
 
@@ -101,11 +99,10 @@ export function SdkProvider({ config: configProp, children }: SdkProviderProps):
         address,
         balance,
         refreshBalance: refreshBalance.bind(null, address, balance),
-        getSigner: () => signer,
-        changeSigner: setSigner,
+        getSignerClient: () => signerClient,
       });
     })();
-  }, [signer, clear, client, config, refreshBalance]);
+  }, [signerClient, clear, client, config, refreshBalance]);
 
   return <GnoContext.Provider value={value}>{children}</GnoContext.Provider>;
 }

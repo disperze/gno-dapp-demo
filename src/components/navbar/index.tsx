@@ -20,7 +20,6 @@ import {
   HamburgerIcon,
   CloseIcon,
   ChevronDownIcon,
-  ExternalLinkIcon,
 } from '@chakra-ui/icons';
 import { ColorModeSwitcher } from "../../ColorModeSwitcher";
 import { AccountButton } from "../account-button";
