@@ -31,8 +31,6 @@ import { useEffect, useState } from 'react';
 import {
   createDeleteMsg,
   createReplyMsg,
-  createSignDoc,
-  makeProtoTx,
   useSdk
 } from '../../services';
 import ReactMarkdown from 'react-markdown';
@@ -78,7 +76,7 @@ export const Board = () => {
     const toast = useToast();
     const location = useLocation();
     const { colorMode } = useColorMode();
-    const { address, client, config, getSigner, balance, refreshBalance } = useSdk();
+    const { address, client, getSignerClient, balance, refreshBalance } = useSdk();
     const [loading, setLoading] = useBoolean();
     const { onOpen, onClose, isOpen } = useDisclosure()
     
@@ -126,8 +124,8 @@ export const Board = () => {
           return;
         }
 
-        const signer = getSigner();
-        if (!client || !signer) {
+        const gno = getSignerClient();
+        if (!client || !gno) {
           return;
         }
 
@@ -147,14 +145,8 @@ export const Board = () => {
         try {
           const msg = replyParams.isReply ? createReplyMsg(address, replyParams.bid, replyParams.threadId, replyParams.postId, message)
           : createDeleteMsg(address, replyParams.bid, replyParams.threadId, replyParams.postId, message);;
-          const account = await client.getAccount(address);
-          const signDoc = createSignDoc(account, msg, config, 2000000);
-          const signature = await signer.signAmino(address, signDoc);
+          const response = await gno.signAndBroadcast(address, [msg]);
 
-          const txBytes = makeProtoTx(signature.signed, signature.signature);
-          // console.log(Buffer.from(txBytes).toString('base64'));
-          const response = await client.broadcastTx(txBytes);
-          // const txHash: Uint8Array = await (window as any).keplr.sendTx("testchain", txBytes, "block");
           console.log(response);
           toast({
             title: `Transaction Successful`,

@@ -11,7 +11,6 @@ import {
   Grid,
   theme,
 } from "@chakra-ui/react"
-import { Home } from "./pages/home"
 import { Transfer } from "./pages/transfer"
 import { SdkProvider } from "./services"
 import { config } from "./config";
@@ -30,7 +29,7 @@ export const App = () => (
         <Router>
           <Navbar />
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<Navigate to="/r/demo/boards:testboard" replace />} />
             <Route path="transfer" element={<Transfer />} />
             <Route path="create-post" element={<NewPost />} />
             <Route path="create-user" element={<NewUser />} />

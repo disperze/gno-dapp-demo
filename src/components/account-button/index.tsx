@@ -27,6 +27,8 @@ import {
 } from '@chakra-ui/react';
 import { MdAccountBalanceWallet } from "react-icons/md";
 import {
+  GnoClient,
+  loadAdenaWallet,
   loadLedgerWallet,
   loadOrCreateWalletDirect,
   useSdk,
@@ -39,6 +41,7 @@ import {
   WalletLoader,
   formatPrice,
   getTokenConfig,
+  delay,
 } from "../../services";
 import userLogo from "../../assets/user-default.svg";
 
@@ -50,7 +53,8 @@ export function AccountButton(): JSX.Element {
 
   async function init(loadWallet: WalletLoader) {
     const signer = await loadWallet(config.chainId, config.addressPrefix);
-    sdk.init(signer);
+    const clientSigner = new GnoClient(config, signer, sdk.client!);
+    sdk.init(clientSigner);
   }
 
   async function connectKeplr() {
@@ -85,9 +89,8 @@ export function AccountButton(): JSX.Element {
     setLoading.on();
 
     try {
-      setTimeout(async () => {
-        await init(loadWallet);
-      }, 500);
+      await delay(500);
+      await init(loadWallet);
     } catch (error) {
       setLoading.off();
       console.error(error);
@@ -126,6 +129,11 @@ export function AccountButton(): JSX.Element {
           <ModalCloseButton />
           <ModalBody>
           <VStack spacing={4}>
+            <Button colorScheme='teal' w={"240px"} variant='outline'
+              onClick={() => connectWallet(loadAdenaWallet)}
+              disabled={webUsbMissing()}>
+              Adena wallet
+            </Button>
             <Button colorScheme='teal' w={"240px"} variant='outline'
               onClick={() => connectWallet(loadOrCreateWalletDirect)}>
               Browser wallet
