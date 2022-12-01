@@ -86,7 +86,7 @@ export const Board = () => {
     const [loaded, setLoaded] = useState<boolean>();
 
     const replaceUrls = (text: string) => {
-        return text.replaceAll("/r/boards?help&__func=CreateThread", "/create-post?");
+        return text.replaceAll("/r/demo/boards?help&__func=CreateThread", "/create-post?");
     };
 
     useEffect(() => {
@@ -228,7 +228,7 @@ export const Board = () => {
         a: (props: any) => {
           const { children, href } = props;
           if (href.startsWith('/')) {
-              const replyUrl = '/r/boards?help&__func=CreateReply&';
+              const replyUrl = '/r/demo/boards?help&__func=CreateReply&';
               if (href.startsWith(replyUrl)) {
                   const queryParams = parseQueryParams(href.replace(replyUrl, '')); 
 
@@ -240,7 +240,7 @@ export const Board = () => {
                   );
               }
 
-              const deleteUrl = '/r/boards?help&__func=DeletePost&';
+              const deleteUrl = '/r/demo/boards?help&__func=DeletePost&';
               if (href.startsWith(deleteUrl)) {
                   const queryParams = parseQueryParams(href.replace(deleteUrl, '')); 
 
