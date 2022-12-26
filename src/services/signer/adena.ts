@@ -4,23 +4,17 @@ import {
   StdSignDoc,
   AminoSignResponse
 } from "@cosmjs/amino";
-import { fromBase64, toHex } from "@cosmjs/encoding";
+import { fromBase64 } from "@cosmjs/encoding";
 
 interface RequestDocontractMessage {
-  message: {
+  messages: {
     type: string;
     value: { [key in string]: any };
-  };
+  }[];
   gasFee: number;
   gasWanted: number;
   memo?: string;
 }
-
-export interface AdenaSignResponse extends AminoSignResponse {
-    readonly txHash: string;
-    readonly height: number;
-}
-
 
 export class AdenaSigner implements OfflineAminoSigner {
   constructor(private accountData: any) {
@@ -33,7 +27,7 @@ export class AdenaSigner implements OfflineAminoSigner {
           pubkey: fromBase64(this.accountData.publicKey.value),
       }]);
   }
-  async signAmino(signerAddress: string, signDoc: StdSignDoc): Promise<AdenaSignResponse> {
+  async signAmino(signerAddress: string, signDoc: StdSignDoc): Promise<AminoSignResponse> {
       const accounts = await this.getAccounts();
       const accountIndex = accounts.findIndex((account) => account.address === signerAddress);
 
@@ -42,31 +36,22 @@ export class AdenaSigner implements OfflineAminoSigner {
       }
 
       const adenaRequest: RequestDocontractMessage = {
-          message: {
-              type: signDoc.msgs[0].type,
-              value: signDoc.msgs[0].value,
-          },
+          messages: signDoc.msgs.map(msg => ({
+              type: msg.type,
+              value: msg.value,
+          })),
           gasFee: parseInt(signDoc.fee.amount[0].amount),
           gasWanted: parseInt(signDoc.fee.gas),
           memo: signDoc.memo,
       };
-      const res = await (window as any).adena.DoContract(adenaRequest)
+      const res = await (window as any).adena.Sign(adenaRequest)
       if (res.code !== 0) {
           throw new Error(res.message);
       }
-      alert(res.message);
 
       return {
-          signed: signDoc,
-          signature: {
-              signature: "",
-              pub_key: {
-                  type: "",
-                  value: "",
-              }
-          },
-          txHash: toHex(fromBase64(res.data.hash)).toUpperCase(),
-          height: parseInt(res.data.height),
+          signed: res.data.signed,
+          signature: res.data.signature,
       };
   }
 }
