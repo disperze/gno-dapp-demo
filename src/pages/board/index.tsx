@@ -147,7 +147,6 @@ export const Board = () => {
           : createDeleteMsg(address, replyParams.bid, replyParams.threadId, replyParams.postId, message);;
           const response = await gno.signAndBroadcast(address, [msg]);
 
-          console.log(response);
           toast({
             title: `Transaction Successful`,
             description: <TransactionLink tx={response.txhash} />,
